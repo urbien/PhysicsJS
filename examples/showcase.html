@@ -60,7 +60,6 @@ require({
     './satnav',
     './demo-mouse-events',
     './sims/simple',
-    './sims/ferris-wheel',
     './sims/newtonian',
     './sims/newtons-revenge',
     './sims/impact',
@@ -68,7 +67,8 @@ require({
     './sims/basket',
     './sims/cloth',
     './sims/fruitcake-on-wheels',
-    './sims/tree'
+    './sims/tree',
+    './sims/ferris-wheel'
 ], function(
     $,
     Physics,
@@ -83,7 +83,7 @@ require({
     var $win = $(window)
         ,viewWidth = $win.width()
         ,viewHeight = $win.height()
-        ,renderer = Physics.renderer('dom', {
+        ,renderer = Physics.renderer('canvas', {
             el: 'viewport',
             width: viewWidth,
             height: viewHeight,
