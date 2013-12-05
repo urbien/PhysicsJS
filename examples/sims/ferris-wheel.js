@@ -151,7 +151,7 @@ define([
     };
 
     sim.title = "Ferris wheel";
-    sim.sourceUrl = "https://github.com/wellcaffeinated/PhysicsJS/blob/master/examples/sims/ferris-wheel.js";
+    sim.sourceUrl = "https://github.com/urbien/PhysicsJS/blob/master/examples/sims/ferris-wheel.js";
 
     return sim;
 });
