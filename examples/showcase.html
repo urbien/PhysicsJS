@@ -42,7 +42,7 @@
         </div>
     </header>
     <div id="display">
-        <canvas id="viewport"></canvas>
+        <div id="viewport"></div>
     </div>
 
 <!-- Scripts -->
@@ -60,6 +60,7 @@ require({
     './satnav',
     './demo-mouse-events',
     './sims/simple',
+    './sims/ferris-wheel',
     './sims/newtonian',
     './sims/newtons-revenge',
     './sims/impact',
@@ -82,7 +83,7 @@ require({
     var $win = $(window)
         ,viewWidth = $win.width()
         ,viewHeight = $win.height()
-        ,renderer = Physics.renderer('canvas', {
+        ,renderer = Physics.renderer('dom', {
             el: 'viewport',
             width: viewWidth,
             height: viewHeight,
