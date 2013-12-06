@@ -174,6 +174,7 @@ define([
 
         }).trigger('resize');
 
+		world.add( Physics.integrator('verlet', { drag: 0.01 }));
         world.add( Physics.behavior('body-collision-detection', { checkAll: false }) );
         world.add( Physics.behavior('sweep-prune') );
         world.add( Physics.behavior('body-impulse-response') );
