@@ -149,16 +149,12 @@ define([
 			mason = new Mason({
 				bounds: bounds
 			});
-			
-			addBricks(1);
 		};
 
 		function initCanvas() {
 			mason = new Mason({
 				bounds: bounds
 			});
-			
-			addBricksToCanvas(n);
 		};
 		
         // world.subscribe('masonry:append', addBricks.bind(null, 1, false));
