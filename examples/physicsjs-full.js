@@ -1,4 +1,5 @@
 /**
+/**
  * PhysicsJS v0.5.3 - 2013-11-25
  * A modular, extendable, and easy-to-use physics engine for javascript
  * http://wellcaffeinated.net/PhysicsJS
@@ -1338,13 +1339,14 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
      * Vector Constructor / Factory
      * @param {Number|Physics.vector} x (optional) Either the x coord. Or a vector to copy.
      * @param {Number} y (optional) The y coord.
+     * @param {Number} z (optional) The z coord.
      */
-    var Vector = function Vector(x, y) {
+    var Vector = function Vector(x, y, z) {
 
         // enforce instantiation
         if ( !(this instanceof Vector) ){
 
-            return new Vector( x, y );
+            return new Vector( x, y, z );
         }
 
         // arrays to store values
@@ -1367,7 +1369,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
         } else {
 
             this.recalc = true; //whether or not recalculate norms
-            this.set( x || 0.0, y || 0.0 );
+            this.set( x || 0.0, y || 0.0, z || 0.0 );
         }
     };
 
@@ -1378,12 +1380,13 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
     /**
      * Sets the components of this Vector.
      */
-    Vector.prototype.set = function(x, y) {
+    Vector.prototype.set = function(x, y, z) {
 
         this.recalc = true;
 
         this._[0] = x || 0.0;
         this._[1] = y || 0.0;
+        this._[2] = z || 0.0;
         return this;
     };
 
@@ -1406,6 +1409,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] += v._[0];
         this._[1] += v._[1];
+        this._[2] += v._[2];
         return this;
     };
 
@@ -1418,30 +1422,35 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] -= v._[0];
         this._[1] -= v._[1];
+        this._[2] += v._[2];
         return this;
     };
 
     /**
      * Add scalars to Vector's components
      */
-    Vector.prototype.add = function(x, y){
+    Vector.prototype.add = function(x, y, z){
         
+		var sameToAll = arguments.length == 1;
         this.recalc = true;
 
         this._[0] += x;
-        this._[1] += y === undefined? x : y;
+        this._[1] += sameToAll ? x : y;
+        this._[2] += sameToAll ? x : z;
         return this;
     };
 
     /**
      * Subtract scalars to Vector's components
      */
-    Vector.prototype.sub = function(x, y){
+    Vector.prototype.sub = function(x, y, z){
         
+		var sameToAll = arguments.length == 1;
         this.recalc = true;
 
         this._[0] -= x;
-        this._[1] -= y === undefined? x : y;
+        this._[1] -= sameToAll ? x : y;
+        this._[2] -= sameToAll ? x : z;
         return this;
     };
 
@@ -1458,6 +1467,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] *= m;
         this._[1] *= m;
+        this._[2] *= m;
         return this;
     };
 
@@ -1466,7 +1476,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
      */
     Vector.prototype.dot = function(v) {
 
-        return (this._[0] * v._[0]) + (this._[1] * v._[1]);
+        return (this._[0] * v._[0]) + (this._[1] * v._[1]) + (this._[2] * v._[2]);
     };
 
     /** 
@@ -3864,7 +3874,6 @@ Physics.geometry('convex-polygon', function( parent ){
     };
 });
 
-
 // ---
 // inside: src/bodies/circle.js
 
@@ -4932,6 +4941,189 @@ Physics.behavior('newtonian', function( parent ){
     };
 });
 
+/**
+ * Newtonian attraction between bodies (inverse square law)
+ * @module behaviors/newtonian
+ */
+Physics.behavior('gravity-well', function( parent ){
+
+    var defaults = {
+
+        strength: 1,
+		mass: 10,
+		x: 0,
+		y: 0
+    };
+
+    return {
+
+        /**
+         * Initialization
+         * @param  {Object} options Configuration object
+         * @return {void}
+         */
+        init: function( options ){
+
+            // call parent init method
+            parent.init.call(this, options);
+
+            options = Physics.util.extend({}, defaults, options);
+
+            this.strength = options.strength;
+            this.tolerance = options.tolerance || 100 * this.strength;
+			this.pos = Physics.vector(options.x, options.y);
+			this.mass = options.mass;
+        },
+        
+        /**
+         * Apply newtonian acceleration between all bodies
+         * @param  {Object} data Event data
+         * @return {void}
+         */
+        behave: function( data ){
+
+            var bodies = data.bodies
+                ,body
+				,mass = this.mass
+                ,strength = this.strength
+                ,tolerance = this.tolerance
+                ,scratch = Physics.scratchpad()
+                ,pos = scratch.vector()
+                ,normsq
+                ,g
+                ;
+
+            for ( var i = 0, l = bodies.length; i < l; i++ ){
+                
+                body = bodies[ i ];
+				// clone the position
+				pos.clone( this.pos );
+				pos.vsub( body.state.pos );
+				// get the square distance
+				normsq = pos.normSq();
+
+				if (normsq > tolerance){
+
+					g = strength / normsq;
+
+					body.accelerate( pos.normalize().mult( g * mass ) );
+				}
+            }
+
+            scratch.done();
+        }
+    };
+});
+
+/**
+ * Newtonian attraction between bodies (inverse square law)
+ * @module behaviors/newtonian
+ */
+Physics.behavior('surface-attraction', function( parent ){
+
+    var defaults = {
+        strength: 1,
+		mass: 10
+    };
+
+    return {
+
+        /**
+         * Initialization
+         * @param  {Object} options Configuration object
+         * @return {void}
+         */
+        init: function( options ){
+
+            // call parent init method
+            parent.init.call(this, options);
+
+            options = Physics.util.extend({}, defaults, options);
+
+            this.strength = options.strength;
+            this.tolerance = options.tolerance || 100 * this.strength;
+			this.mass = options.mass;
+        },
+        
+        /**
+         * Apply newtonian acceleration between all bodies
+         * @param  {Object} data Event data
+         * @return {void}
+         */
+        behave: function( data ){
+
+            var bodies = data.bodies
+                ,body
+				,bodyIsFixed
+				,other
+				,bodyPos
+				,mass = this.mass
+                ,strength = this.strength
+                ,tolerance = this.tolerance
+                ,scratch = Physics.scratchpad()
+                ,pos = scratch.vector()
+                ,v1 = scratch.vector()
+                ,v2 = scratch.vector()
+				,vertices
+				,numVertices
+				,i
+				,minDistance = Infinity
+				,distanceToLine
+				,pt
+				,nearestPt
+                ,normsq
+                ,g
+                ;
+
+            for ( var b = 0, l = bodies.length; b < l; b++ ) {
+                body = bodies[ b ]; // the body to be accelerated
+				if (body.options.fixed)
+					continue;
+					
+				bodyPos = body.state.pos;
+                for ( var c = 0; c < l; c++ ) {
+					if (c == b)
+						continue;
+						
+                    other = bodies[ c ];
+					vertices = other.geometry.vertices;
+					if (!vertices)
+						nearestPt = other.state.pos;
+					else {
+						i = numVertices = vertices.length;
+						while (i--) {
+							v1.clone(vertices[i]);
+							v1.vadd(other.state.pos);
+							v2.clone(vertices[(i + 1) % numVertices]);
+							v2.vadd(other.state.pos);
+							pt = Physics.geometry.nearestPointOnLine(bodyPos, v1, v2);
+							distanceToLine = pt.dist(bodyPos);
+							if (distanceToLine < minDistance) {
+								minDistance = distanceToLine;
+								nearestPt = pt;
+							}
+						}
+					}
+					
+					// clone the position
+					pos.clone( nearestPt );
+					pos.vsub( bodyPos );
+					// get the square distance
+					normsq = pos.normSq();
+
+					if (normsq > tolerance){
+
+						g = strength / normsq;
+						body.accelerate( pos.normalize().mult( g * mass ) );
+					}					
+				}				
+            }
+
+            scratch.done();
+        }
+    };
+});
+
 
 // ---
 // inside: src/behaviors/rigid-constraint-manager.js
@@ -5023,7 +5215,7 @@ Physics.behavior('rigid-constraint-manager', function( parent ){
                 id: Physics.util.uniqueId('rigid-constraint'),
                 bodyA: bodyA,
                 bodyB: bodyB,
-                targetLength: targetLength || this.options.targetLength
+                targetLength: typeof targetLength == 'number' ? targetLength : this.options.targetLength
             });
 
             return cst;
@@ -5686,7 +5878,7 @@ Physics.behavior('verlet-constraints', function( parent ){
                 bodyA: bodyA,
                 bodyB: bodyB,
                 stiffness: stiffness || 0.5,
-                targetLength: targetLength || bodyB.state.pos.dist( bodyA.state.pos )
+                targetLength: typeof targetLength == 'number' ? targetLength : bodyB.state.pos.dist( bodyA.state.pos )
             };
 
             cst.targetLengthSq = cst.targetLength * cst.targetLength;

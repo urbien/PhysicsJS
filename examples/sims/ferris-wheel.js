@@ -10,13 +10,16 @@ define([
         var $win = $(window)
             ,viewWidth
             ,viewHeight
-			,constrainer = Physics.behavior('rigid-constraint-manager')
+			,constrainer = Physics.behavior('verlet-constraints')
+			// ,constrainer = Physics.behavior('rigid-constraint-manager')
 			,tips = []
+			,tipShadows = []
 			,centerX
 			,centerY
 			,center
 			,wheelRadius
-			,axle;
+			,axle
+			,rail;
 
 		function updateBounds(){
             viewWidth = $win.width();
@@ -31,6 +34,16 @@ define([
 					y: centerY,
 					fixed: true,
 					radius: 10,
+					mass: 10
+				});
+			}
+			
+			if (!rail) {
+				tail = Physics.body('circle', {
+					x: centerX,
+					y: centerY,
+					fixed: true,
+					radius: wheelRadius,
 					mass: 10
 				});
 			}
@@ -104,7 +117,7 @@ define([
 		
 		function init(n) {
 			updateBounds();
-			tips.length = 0;
+			tips.length = tipShadows.length = 0;
 			
 			var bodies = world.getBodies(),
 				distanceBetweenTips = 2 * wheelRadius * Math.sin(Math.PI / n), // http://www.math.rutgers.edu/~erowland/polygons.html
@@ -112,7 +125,8 @@ define([
 				scratchpad = Physics.scratchpad(),
 				nextPoint = scratchpad.vector(),
 				prev,
-				tip;
+				tip,
+				tipShadow;
 				
 			if (bodies.length)
 				world.remove(bodies);				
@@ -121,20 +135,34 @@ define([
 			while (n--) {
 				nextPoint.rotate(radiansBetweenTips, center);
 				tip = newTip(nextPoint.get(0), nextPoint.get(1));
-				constrainer.constrain(axle, tip, wheelRadius);
-				if (prev)
-					constrainer.constrain(tip, prev, distanceBetweenTips);
+				tipShadow = Physics.body('point', {
+					fixed: true,
+					x: nextPoint.get(0),
+					y: nextPoint.get(1),
+					radius: 0
+				});
+				
+				constrain(tip, tipShadow, 0);
+				constrain(axle, tipShadow, wheelRadius);
+				// if (prev)
+					// constrain(tip, prev, distanceBetweenTips);
 					
 				tips.push(tip);
+				tipShadows.push(tipShadow);
 				prev = tip;
 			};
 			
-			if (n > 1)
-				constrainer.constrain(tips[0], prev, distanceBetweenTips);
+			// if (n > 1)
+				// constrain(tips[0], prev, distanceBetweenTips);
 				
 			world.add(axle);
 			world.add(tips);
-			reconstrainSpokes();
+			//reconstrainSpokes();
+		}
+		
+		function constrain(a, b, distance) {
+			//constrainer.distanceConstraint(a, b, 0.1, distance); // verlet
+			//constrainer.constrain(a, b, distance); // rigid
 		}
 		
 		// need this when using DOM renderer
@@ -145,9 +173,15 @@ define([
 		// });
 		
         $(window).on('resize', updateBounds);
+		
+		init(10);
 		world.add( constrainer );
 		world.add( Physics.integrator('verlet', { drag: 0.01 }));
-		init(10);
+        //world.add( Physics.behavior('gravity-well', { strength: 10, mass: 20, x: centerX, y: centerY } ) );
+        world.add( Physics.behavior('newtonian', { strength: -10 } ) );
+        world.add( Physics.behavior('body-impulse-response') );
+		world.add( Physics.behavior('body-collision-detection') );
+		world.add( Physics.behavior('sweep-prune') );
     };
 
     sim.title = "Ferris wheel";
