@@ -1,0 +1,210 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>PhysicsJS Masonry</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+
+  <!-- General styles -->
+  <link href="http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700|Alice" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="fonts/Caviar-Dreams-fontfacekit/stylesheet.css">
+  <link rel="stylesheet" href="style.css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<!-- Setup -->
+    <header class="controls">
+        <div class="inner">
+            <ul>
+                <li class="button"><a href="#" class="buttons append">append</a></li>
+                <li class="button"><a href="#" class="buttons prepend">prepend</a></li>
+                <li class="button"><a href="#" class="buttons start-stop">pause</a></li>
+            </ul>
+        </div>
+    </header>
+    <div id="display">
+        <div id="viewport"></div>
+    </div>
+
+<!-- Scripts -->
+<script src="../lib/require.js"></script>
+<script>
+require({
+    baseUrl: './',
+    paths: {
+        'physicsjs': './physicsjs-full',
+        'masonry': './masonryLayout',
+        'jquery': '../../lib/jquery-1.9.1'
+    }
+},[
+    'jquery',
+    'physicsjs',
+    './satnav',
+    './demo-mouse-events',
+    './sims/masonry'
+], function(
+    $,
+    Physics,
+    Satnav,
+    examples
+){
+
+    // each argument after demo-mouse-events is a world object for a demo
+    examples = Array.prototype.slice.call( arguments, 4 );
+
+    var currentWorld;
+    var $win = $(window)
+        ,viewWidth = $win.width()
+        ,viewHeight = $win.height()
+        ,renderer = Physics.renderer('dom', {
+            el: 'viewport',
+            width: viewWidth,
+            height: viewHeight,
+            meta: true,
+            // debug:true,
+            styles: {
+                'circle': {
+                    strokeStyle: 'hsla(60, 37%, 17%, 1)',
+                    lineWidth: 1,
+                    fillStyle: 'hsla(60, 37%, 57%, 0.8)',
+                    angleIndicator: 'hsla(60, 37%, 17%, 0.4)'
+                },
+                'convex-polygon' : {
+                    strokeStyle: 'hsla(60, 37%, 17%, 1)',
+                    lineWidth: 1,
+                    fillStyle: 'hsla(60, 47%, 37%, 0.8)',
+                    angleIndicator: 'hsla(0, 0%, 0%, 0)'
+                }
+            }
+        })
+        ,mouseEvents
+        ;
+
+    // resize events
+    $(window).on('resize', function(){
+
+        viewWidth = $win.width();
+        viewHeight = $win.height();
+        
+        renderer.el.width = viewWidth;
+        renderer.el.height = viewHeight;
+
+        renderer.options.width = viewWidth;
+        renderer.options.height = viewHeight;
+
+    }).trigger('resize');
+
+    // initialize a world showing a demo
+    function initWorld( world ){
+
+        // pause it for now
+        world.pause();
+        // add the renderer
+        world.add( renderer );
+
+        Physics.util.ticker.subscribe(function( time, dt ){
+
+            world.step( time );
+            // only render if not paused
+            if ( !world.isPaused() ){
+                world.render();
+            }
+        });
+    }
+
+    // play/pause button
+    $(document).on('click', '.start-stop', function(e){
+
+        e.preventDefault();
+        var paused = currentWorld.isPaused();
+
+        if (paused){
+            $(this).text('pause');
+            currentWorld.unpause();
+        } else {
+            $(this).text('play');
+            currentWorld.pause();
+        }
+    });
+	
+	// masonry append
+	$(document).on('click', '.append', function(e){
+        e.preventDefault();
+		currentWorld.publish({
+			topic: 'masonry:append'
+		});
+    });
+
+	// masonry prepend
+	$(document).on('click', '.prepend', function(e){
+        e.preventDefault();
+		currentWorld.publish({
+			topic: 'masonry:prepend'
+		});
+    });
+
+    $(function(){
+
+        mouseEvents = Physics.behavior('demo-mouse-events', { el: '#viewport' });
+
+        // start the ticker
+        Physics.util.ticker.start();
+
+        // hashchange event handling
+        Satnav({
+            html5: false, // don't use pushState
+            force: false, // force change event on same route
+            poll: 100 // poll hash every 100ms if polyfilled
+        })
+        .navigate({
+            path: 'demo-{idx}',
+            directions: function(params) {
+                var idx = params.idx;
+
+                $('#examples ul a.btn-demo').removeClass('on');
+                $('#examples ul a[href="#demo-'+idx+'"]').addClass('on');
+
+                if ( idx < examples.length ){
+
+                    if (currentWorld){
+                        // delete the old world
+                        currentWorld.pause();
+                        delete currentWorld;
+                    }
+                    
+                    // initialize the world
+                    currentWorld = Physics( examples[ idx ] );
+                    initWorld( currentWorld );
+                    currentWorld.add( mouseEvents );
+                    currentWorld.unpause();
+                }
+            }
+        })
+        .otherwise('demo-0') // will route all unmatched paths to #/
+        .change(function(params, old) {
+            var title = $('#examples ul a[href="#demo-'+params.idx+'"]').text();
+
+            if (window._gaq){
+                _gaq.push(['_trackEvent', 'Demos', 'View', title]);
+            }
+        })
+        .go()
+        ;
+    });
+    
+});
+</script>
+  
+</body>
+</html>

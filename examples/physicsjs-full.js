@@ -3253,11 +3253,11 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         step: function( now ){
             
-			var i = this._bodies.length;
-			while (i--) {
-				var body = this._bodies[i];
-				console.log("body", body.options.name,  "at: ", body.state.pos.get(0) + ', ' + body.state.pos.get(1));
-			}
+			// var i = this._bodies.length;
+			// while (i--) {
+				// var body = this._bodies[i];
+				// console.log("body", body.options.name,  "at: ", body.state.pos.get(0) + ', ' + body.state.pos.get(1));
+			// }
 			
             if ( this._paused ){
 
