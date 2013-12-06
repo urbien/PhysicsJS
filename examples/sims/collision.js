@@ -81,7 +81,7 @@ define([
             if (!world.isPaused() && dropCount++ < 80){
 
                 dropInBody();
-                setTimeout(dropDelay, 1500);
+                setTimeout(dropDelay, 100);
             }
         }
         

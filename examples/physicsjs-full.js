@@ -3253,6 +3253,12 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         step: function( now ){
             
+			var i = this._bodies.length;
+			while (i--) {
+				var body = this._bodies[i];
+				console.log("body", body.options.name,  "at: ", body.state.pos.get(0) + ', ' + body.state.pos.get(1));
+			}
+			
             if ( this._paused ){
 
                 this._time = false;
@@ -4929,6 +4935,84 @@ Physics.behavior('newtonian', function( parent ){
                     if (normsq > tolerance){
 
                         g = strength / normsq;
+
+                        body.accelerate( pos.normalize().mult( g * other.mass ) );
+                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
+                    }
+                }
+            }
+
+            scratch.done();
+        }
+    };
+});
+
+/**
+ * Newtonian attraction between bodies (inverse square law)
+ * @module behaviors/newtonian
+ */
+Physics.behavior('distance-based-force', function( parent ){
+
+    var defaults = {
+
+        strength: 1,
+		n: 2, // the strength of the force is proportional to distance^n
+    };
+
+    return {
+
+        /**
+         * Initialization
+         * @param  {Object} options Configuration object
+         * @return {void}
+         */
+        init: function( options ){
+
+            // call parent init method
+            parent.init.call(this, options);
+
+            options = Physics.util.extend({}, defaults, options);
+
+            this.n = options.n;
+            this.strength = options.strength;
+            this.tolerance = options.tolerance || 100 * this.strength;
+        },
+        
+        /**
+         * Apply newtonian acceleration between all bodies
+         * @param  {Object} data Event data
+         * @return {void}
+         */
+        behave: function( data ){
+
+            var bodies = data.bodies
+                ,body
+                ,other
+				,n = this.n
+                ,strength = this.strength
+                ,tolerance = this.tolerance
+                ,scratch = Physics.scratchpad()
+                ,pos = scratch.vector()
+                ,normPowN
+                ,g
+                ;
+
+            for ( var j = 0, l = bodies.length; j < l; j++ ){
+                
+                body = bodies[ j ];
+
+                for ( var i = j + 1; i < l; i++ ){
+                    
+                    other = bodies[ i ];
+                    // clone the position
+                    pos.clone( other.state.pos );
+                    pos.vsub( body.state.pos );
+                    // get the square distance
+                    normPowN = Math.pow(pos.norm(), n);
+
+                    if (normPowN > tolerance){
+
+                        g = strength / normPowN;
 
                         body.accelerate( pos.normalize().mult( g * other.mass ) );
                         other.accelerate( pos.mult( body.mass/other.mass ).negate() );
@@ -6727,7 +6811,8 @@ Physics.renderer('dom', function( proto ){
         drawBody = function( body, view ){
 
             var pos = body.state.pos;
-            view.style[cssTransform] = 'translate('+pos.get(0)+'px,'+pos.get(1)+'px) rotate('+body.state.angular.pos+'rad)';
+//            view.style[cssTransform] = 'translate('+pos.get(0)+'px,'+pos.get(1)+'px) rotate('+body.state.angular.pos+'rad)';
+            view.style[cssTransform] = 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, ' +pos.get(0)+','+pos.get(1)+', 0, 1)';// rotateZ('+body.state.angular.pos+'rad)';
         };
     } else {
         drawBody = function( body, view ){
@@ -6772,6 +6857,22 @@ Physics.renderer('dom', function( proto ){
 
                 viewport.appendChild(stats);
             }
+        },
+
+		/**
+         * Set dom element style properties for a convex-polygon
+         * @param  {HTMLElement} el       The element
+         * @param  {Geometry} geometry The body's geometry
+         * @return {void}
+         */
+        'convex-polygonProperties': function( el, geometry ){
+
+            var aabb = geometry.aabb();
+
+            el.style.width = (aabb.halfWidth * 2) + px;
+            el.style.height = (aabb.halfHeight * 2) + px;
+            el.style.marginLeft = (-aabb.halfWidth) + px;
+            el.style.marginTop = (-aabb.halfHeight) + px;
         },
 
         /**
