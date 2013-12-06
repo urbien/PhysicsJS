@@ -305,19 +305,8 @@ define('masonry', function() {
           top = extremeY + this.offset.y + brick.geometry._aabb._hh;
       }
 
-	  console.log("adding brick at (" + left + ", " + top + ")");
+	  console.log("adding", brick.geometry._aabb._hw * 2, "x", brick.geometry._aabb._hh * 2, "brick at (" + left + ", " + top + ")");
 	  brick.state.pos.set(left, top);
-      // brick.style[CSS.transformLookup] = DOM.positionToMatrix3DString(left, top);
-      // brick.style.opacity = 0.999999;
-      // brick.dataset.x = left;
-      // brick.dataset.y = top;
-      
-//      style[CSS.transformLookup] = DOM.positionToMatrix3DString(left, top);
-//      style.opacity = 0.99999;
-//      this.styleQueue.push({ el: brick, style: style, data: {
-//        y: top,
-//        x: left
-//      }});
       
       // apply setHeight to necessary columns
       for ( i=0; i < setSpan; i++ ) {
