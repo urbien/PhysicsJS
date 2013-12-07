@@ -3421,6 +3421,7 @@ Physics.integrator('verlet', function( parent ){
             var dtdt = dt * dt
                 ,drag = 1 - this.options.drag
                 ,body = null
+				,lock = null
                 ,state
                 ;
 
@@ -3462,6 +3463,11 @@ Physics.integrator('verlet', function( parent ){
                     // v += a * dt * dt
                     state.vel.vadd( state.acc.mult( dtdt ) );
 
+					// Get velocity projection onto non-locked axes
+					if (lock = body.options.lock) {
+						state.vel.set(lock.x ? 0 : state.vel.get(0), lock.y ? 0 : state.vel.get(1), lock.z ? 0 : state.vel.get(1));
+					}
+					
                     // normalize velocity 
                     state.vel.mult( 1/dt );
 
@@ -4898,7 +4904,7 @@ Physics.behavior('newtonian', function( parent ){
             options = Physics.util.extend({}, defaults, options);
 
             this.strength = options.strength;
-            this.tolerance = options.tolerance || 100 * this.strength;
+            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
         },
         
         /**
@@ -5034,7 +5040,7 @@ Physics.behavior('gravity-well', function( parent ){
     var defaults = {
 
         strength: 1,
-		mass: 10,
+		mass: 1,
 		x: 0,
 		y: 0
     };
@@ -5054,7 +5060,7 @@ Physics.behavior('gravity-well', function( parent ){
             options = Physics.util.extend({}, defaults, options);
 
             this.strength = options.strength;
-            this.tolerance = options.tolerance || 100 * this.strength;
+            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
 			this.pos = Physics.vector(options.x, options.y);
 			this.mass = options.mass;
         },

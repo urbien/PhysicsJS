@@ -9,7 +9,6 @@ define(
     ){
 
         Physics.behavior('demo-mouse-events', function( parent ){
-
             return {
 
                 init: function( options ){
@@ -77,18 +76,27 @@ define(
 
                 behave: function( data ){
 
+                    var scratch = Physics.scratchpad()
+                        ,v = scratch.vector();
+						
                     if ( this.body ){
 
                         // if we have a body, we need to move it the the new mouse position.
                         // we'll also track the velocity of the mouse movement so that when it's released
                         // the body can be "thrown"
-                        this.body.state.pos.clone( this.mousePos ).vsub( this.offset );
+						var bodyPos = this.body.state.pos;
+						var lock = this.body.options.lock || {};
+						v.clone(this.mousePos).vsub(this.offset);
+						bodyPos.set(lock.x ? bodyPos.get(0) : v.get(0), lock.y ? bodyPos.get(1) : v.get(1));
                         this.body.state.vel.clone( this.body.state.pos ).vsub( this.mousePosOld ).vadd( this.offset ).mult( 1 / 30 );
                         this.body.state.vel.clamp( { x: -1, y: -1 }, { x: 1, y: 1 } );
+						scratch.done();
                         return;
                     }
 
-                    if ( !this.mouseDown ){
+                    // if ( !this.mouseDown ){
+					if (true) {
+						scratch.done();
                         return;
                     }
 
@@ -97,8 +105,6 @@ define(
 
                     var bodies = data.bodies
                         // use a scratchpad to speed up calculations
-                        ,scratch = Physics.scratchpad()
-                        ,v = scratch.vector()
                         ,body
                         ;
 

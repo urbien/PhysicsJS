@@ -13,10 +13,12 @@ define([
 			container = document.getElementById('viewport'),
             viewWidth = $win.width(),
             viewHeight = $win.height(),
+			BATCH_SIZE = 10,
 			COL_WIDTH = 30,
+			INTER_BRICK_MARGIN = 10,
 			NUM_COLS = 5,
-			PADDING = 20,
-			LEFT_WALL_OFFSET_FROM_CENTER = (COL_WIDTH * NUM_COLS + PADDING) / 2 | 0,
+			MASONRY_WIDTH = COL_WIDTH * NUM_COLS + INTER_BRICK_MARGIN * (NUM_COLS - 1),
+			LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
             bounds = calcBounds(),
             edgeBounce = Physics.behavior('edge-collision-detection', {
                 aabb: bounds,
@@ -28,7 +30,9 @@ define([
 			ADD_FORCES = false;
 			
 		function calcBounds() {
-			return Physics.aabb(viewWidth / 2 - LEFT_WALL_OFFSET_FROM_CENTER | 0, 0, viewWidth / 2 + LEFT_WALL_OFFSET_FROM_CENTER | 0, viewHeight);
+			//return Physics.aabb(viewWidth / 2 - LEFT_WALL_OFFSET_FROM_CENTER | 0, 0, viewWidth / 2 + LEFT_WALL_OFFSET_FROM_CENTER | 0, viewHeight);
+			// return Physics.aabb(viewWidth / 2 | 0, 0, viewWidth / 2 + MASONRY_WIDTH, viewHeight);
+			return Physics.aabb(0, 0, viewWidth / 2, viewHeight);
 		}
 		
 		function addBricks(n, prepend) {
@@ -43,6 +47,9 @@ define([
 			
 		function addBrick(width, height) {
 			var body = Physics.body('convex-polygon', {
+				lock: {
+					x: true
+				},
 				name: 'blah' + bodyCount++,
 				//mass: width * height,
 				vertices: [
@@ -84,6 +91,7 @@ define([
 
 		function init() {
 			mason = new Mason({
+				gutterWidth: INTER_BRICK_MARGIN,
 				bounds: bounds
 			});
 		};
@@ -96,19 +104,18 @@ define([
 
         // }).trigger('resize');
 
-		// world.add( Physics.integrator('verlet', { drag: 0.01 }));
 		// world.add( Physics.behavior('newtonian', { strength: 10 }) );
         world.add( Physics.behavior('body-collision-detection', { checkAll: false }) );
         world.add( Physics.behavior('sweep-prune') );
         world.add( Physics.behavior('body-impulse-response') );
         world.add( edgeBounce );
 		
-		world.subscribe('masonry:append', addBricks.bind(null, NUM_COLS, false));
-		world.subscribe('masonry:prepend', addBricks.bind(null, NUM_COLS, true));		
+		world.subscribe('masonry:append', addBricks.bind(null, BATCH_SIZE, false));
+		world.subscribe('masonry:prepend', addBricks.bind(null, BATCH_SIZE, true));		
 
 		if (ADD_FORCES) {
 			// add close-distance repulsion
-			world.add( Physics.behavior('distance-based-force', { n: 3, strength: -10 }) );
+			world.add( Physics.behavior('distance-based-force', { n: 3, strength: -100 }) );
 			// add anti-gravity
 			world.add( Physics.behavior('constant-acceleration', { acc: {x : 0, y: -0.001 } }) );
 		}

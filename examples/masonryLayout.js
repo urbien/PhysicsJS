@@ -39,19 +39,19 @@ define('masonry', function() {
 		this._init();
   };
 
-  function cleanData(bricks) {
-    var i = bricks.length,
-        data;
+  // function cleanData(bricks) {
+    // var i = bricks.length,
+        // data;
     
-    while (i--) {
-      data = bricks[i].view.dataset;
-      delete data.outerWidth;
-      delete data.outerHeight;
-      delete data.masonryColSpan;
-      delete data.x;
-      delete data.y;
-    }
-  }
+    // while (i--) {
+      // data = bricks[i].view.dataset;
+      // delete data.outerWidth;
+      // delete data.outerHeight;
+      // delete data.masonryColSpan;
+      // delete data.x;
+      // delete data.y;
+    // }
+  // }
   
 //  function getXYZ(brick) {
 //    return DOM.parseTranslation(brick.style[CSS.transformLookup]);
@@ -266,7 +266,7 @@ define('masonry', function() {
           extreme = this.options.fromBottom ? Math.max : Math.min,
           extremeY  = extreme.apply( Math, setY ),
           multiplier = this.options.fromBottom ? -1 : 1,
-          setHeight = extremeY + (this[dimensionMethod](brick) * multiplier),
+          setHeight = extremeY + (this[dimensionMethod](brick) * multiplier) + this.options.gutterWidth,
           i = setY.length,
           shortCol  = i,
           setSpan   = this.cols + 1 - i,
@@ -297,7 +297,7 @@ define('masonry', function() {
           left = extremeY + this.offset.x;
       }
       else {
-        left = this.columnWidth * shortCol + this.offset.x + brick.geometry._aabb._hw;
+        left = this.columnWidth * shortCol + this.offset.x + brick.geometry._aabb._hw; // columnWidth includes gutterWidth
       
         if (this.options.fromBottom)
           top = setHeight - this.offset.y - brick.geometry._aabb._hh;
@@ -400,7 +400,9 @@ define('masonry', function() {
     },
   
     _getLeftmostColumn: function(brick) {
-      var offset = parseInt(brick.view.dataset[this.options.horizontal ? 'y' : 'x'], 10) || 0;
+	  var coordIdx = this.options.horizontal ? 1 : 0;
+	  var dimProp = this.options.horizontal ? '_hh' : '_hw';
+      var offset = brick.state.pos.get(coordIdx) - brick.geometry._aabb[dimProp];
       var edgeCol = Math.round(offset / this.columnWidth);
       return edgeCol;
     },
@@ -459,7 +461,7 @@ define('masonry', function() {
     },
 
     removed: function(bricks) {
-      cleanData(bricks);      
+      // cleanData(bricks);      
       this.bricks = _.difference(this.bricks, bricks);      
       this._recalcColYs();
     }
