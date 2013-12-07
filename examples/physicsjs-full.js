@@ -1341,12 +1341,12 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
      * @param {Number} y (optional) The y coord.
      * @param {Number} z (optional) The z coord.
      */
-    var Vector = function Vector(x, y, z) {
+    var Vector = function Vector(x, y) {
 
         // enforce instantiation
         if ( !(this instanceof Vector) ){
 
-            return new Vector( x, y, z );
+            return new Vector( x, y );
         }
 
         // arrays to store values
@@ -1369,24 +1369,61 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
         } else {
 
             this.recalc = true; //whether or not recalculate norms
-            this.set( x || 0.0, y || 0.0, z || 0.0 );
+            this.set( x || 0.0, y || 0.0 );
         }
     };
 
     /**
      * Methods
      */
-
+	 
+    /**
+     * Locks the axes of this vector
+     */
+	var vFns = ['set', 'add', 'vadd', 'sub', 'vsub', 'mult', 'perp', 'clone', 'zero', 'negate', 'clamp'];
+	Vector.prototype.lock = function(lock) {
+		var self = this,
+			origClamp = this.clamp,
+			origX = this.get(0),
+			origY = this.get(1),
+			lockX = lock.hasOwnProperty('x'),
+			lockY = lock.hasOwnProperty('y'),
+			xMin = lockX ? origX - lock.x / 2 : -Infinity,
+			xMax = lockX ? origX + lock.x / 2 : Infinity,
+			yMin = lockY ? origY - lock.y / 2 : -Infinity,
+			yMax = lockY ? origY + lock.y / 2 : Infinity,
+			min = Physics.vector(xMin, yMin),
+			max = Physics.vector(xMax, yMax);
+			
+		
+		vFns.forEach(function(fn) {
+			var orig = self[fn];
+			self[fn] = function() {
+				try {
+					return orig.apply(this, arguments);
+				} finally {
+					origClamp.call(this, min, max);
+				};
+			};
+		})
+	};
+	
+	Vector.prototype.unlock = function() {
+		var self = this;
+		vFns.forEach(function(fn) {
+			self[fn] = Vector.prototype[fn];
+		});
+	};
+	
     /**
      * Sets the components of this Vector.
      */
-    Vector.prototype.set = function(x, y, z) {
+    Vector.prototype.set = function(x, y) {
 
         this.recalc = true;
 
         this._[0] = x || 0.0;
         this._[1] = y || 0.0;
-        this._[2] = z || 0.0;
         return this;
     };
 
@@ -1409,7 +1446,6 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] += v._[0];
         this._[1] += v._[1];
-        this._[2] += v._[2];
         return this;
     };
 
@@ -1422,35 +1458,30 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] -= v._[0];
         this._[1] -= v._[1];
-        this._[2] += v._[2];
         return this;
     };
 
     /**
      * Add scalars to Vector's components
      */
-    Vector.prototype.add = function(x, y, z){
+    Vector.prototype.add = function(x, y){
         
-		var sameToAll = arguments.length == 1;
         this.recalc = true;
 
         this._[0] += x;
-        this._[1] += sameToAll ? x : y;
-        this._[2] += sameToAll ? x : z;
+        this._[1] += typeof y == 'undefined' ? x : y;
         return this;
     };
 
     /**
      * Subtract scalars to Vector's components
      */
-    Vector.prototype.sub = function(x, y, z){
+    Vector.prototype.sub = function(x, y){
         
-		var sameToAll = arguments.length == 1;
         this.recalc = true;
 
         this._[0] -= x;
-        this._[1] -= sameToAll ? x : y;
-        this._[2] -= sameToAll ? x : z;
+        this._[1] -= typeof y == 'undefined' ? x : y;
         return this;
     };
 
@@ -1467,7 +1498,6 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 
         this._[0] *= m;
         this._[1] *= m;
-        this._[2] *= m;
         return this;
     };
 
@@ -1476,7 +1506,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
      */
     Vector.prototype.dot = function(v) {
 
-        return (this._[0] * v._[0]) + (this._[1] * v._[1]) + (this._[2] * v._[2]);
+        return (this._[0] * v._[0]) + (this._[1] * v._[1]);
     };
 
     /** 
@@ -1903,8 +1933,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
     Vector.prototype.equals = function(v){
 
         return this._[0] === v._[0] &&
-            this._[1] === v._[1] &&
-            this._[2] === v._[2];
+            this._[1] === v._[1];
     };
 
 
@@ -2026,8 +2055,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 // ---
 // inside: src/core/body.js
 
-(function(){
-
+(function(){	
     var defaults = {
 
         // is the body fixed and imovable?
@@ -3421,7 +3449,7 @@ Physics.integrator('verlet', function( parent ){
             var dtdt = dt * dt
                 ,drag = 1 - this.options.drag
                 ,body = null
-				,lock = null
+				//,lock = null
                 ,state
                 ;
 
@@ -3464,9 +3492,9 @@ Physics.integrator('verlet', function( parent ){
                     state.vel.vadd( state.acc.mult( dtdt ) );
 
 					// Get velocity projection onto non-locked axes
-					if (lock = body.options.lock) {
-						state.vel.set(lock.x ? 0 : state.vel.get(0), lock.y ? 0 : state.vel.get(1), lock.z ? 0 : state.vel.get(1));
-					}
+					// if (lock = body.options.lock) {
+						// state.vel.set(lock.x ? 0 : state.vel.get(0), lock.y ? 0 : state.vel.get(1), lock.z ? 0 : state.vel.get(1));
+					// }
 					
                     // normalize velocity 
                     state.vel.mult( 1/dt );
@@ -5922,6 +5950,7 @@ Physics.behavior('verlet-constraints', function( parent ){
             }
 
             world.subscribe('integrate:positions', this.resolve, this);
+			this._world = world;
         },
 
         /**
@@ -5932,6 +5961,8 @@ Physics.behavior('verlet-constraints', function( parent ){
         disconnect: function( world ){
 
             world.unsubscribe('integrate:positions', this.resolve);
+			if (this._world == world)
+				this._world = null;
         },
 
         /**
@@ -5955,7 +5986,8 @@ Physics.behavior('verlet-constraints', function( parent ){
          */
         distanceConstraint: function( bodyA, bodyB, stiffness, targetLength ){
 
-            var cst;
+            var self = this,
+				cst;
 
             if (!bodyA || !bodyB){
 
@@ -5972,11 +6004,26 @@ Physics.behavior('verlet-constraints', function( parent ){
             };
 
             cst.targetLengthSq = cst.targetLength * cst.targetLength;
-
+			this._watchRemove(cst, bodyA, bodyB);
             this._distanceConstraints.push( cst );
             return cst;
         },
 
+		_watchRemove: function(cst /* bodies */) {
+			var self = this,
+				args = arguments,
+				l = args.length;
+				
+			this._world.subscribe('remove:body', function removeConstraint(data) {
+				for (var i = 1; i < l; i++) {
+					if (data.body == args[i]) {
+						self._world.unsubscribe('remove:body', removeConstraint);
+						self.remove(cst);
+					}
+				}
+			});
+		},
+		
         /**
          * Constrain three bodies to a target relative angle
          * @param  {Object} bodyA        First body

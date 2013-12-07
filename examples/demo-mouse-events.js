@@ -13,6 +13,7 @@ define(
 
                 init: function( options ){
 
+					var constrainer;
                     var self = this;
 
                     this.mousePos = Physics.vector();
@@ -21,11 +22,19 @@ define(
                     
                     this.el = $(options.el).on({
                         mousedown: function(e){
-                            
+							var world = self._world;
+							if (!constrainer) {
+								constrainer = Physics.behavior('verlet-constraints');
+								world.add(constrainer);
+							}
+							else	
+								constrainer.drop();
+								
                             var offset = $(this).offset();
                             self.mousePos.set(e.pageX - offset.left, e.pageY - offset.top);
+                            self.mouseDown = true;
                             
-                            var body = self._world.findOne({ $at: self.mousePos }) ;
+                            var body = world.findOne({ $at: self.mousePos }) ;
                             if ( body ){
 
                                 // we're trying to grab a body
@@ -36,10 +45,16 @@ define(
                                 self.body = body;
                                 // remember the mouse offset
                                 self.offset.clone( self.mousePos ).vsub( body.state.pos );
+								
+								var bodies = world.getBodies();
+								for (var i = 0; i < bodies.length; i++) {
+									var b = bodies[i];
+									constrainer.distanceConstraint(b, body, 1, b.state.pos.dist(body.state.pos));
+								}
+								
                                 return;
                             }
 
-                            self.mouseDown = true;
                         },
                         mousemove: function(e){
                             var offset = $(this).offset();
@@ -79,7 +94,7 @@ define(
                     var scratch = Physics.scratchpad()
                         ,v = scratch.vector();
 						
-                    if ( this.body ){
+                    /*if ( this.body ){
 
                         // if we have a body, we need to move it the the new mouse position.
                         // we'll also track the velocity of the mouse movement so that when it's released
@@ -93,13 +108,13 @@ define(
 						scratch.done();
                         return;
                     }
+					*/
 
-                    // if ( !this.mouseDown ){
-					if (true) {
+                    if ( !this.mouseDown ){
 						scratch.done();
                         return;
                     }
-
+					
                     // if we don't have a body, then just accelerate
                     // all bodies towards the current mouse position
 
@@ -116,9 +131,9 @@ define(
                         v.clone(this.mousePos)
                          .vsub( body.state.pos )
                          .normalize()
-                         .mult( 0.001 )
+                         .mult( 0.01 )
                          ;
-
+						
                         body.accelerate( v );
                     }
 

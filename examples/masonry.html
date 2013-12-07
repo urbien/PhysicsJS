@@ -28,7 +28,9 @@
         <div class="inner">
             <ul>
                 <li class="button"><a href="#" class="buttons append">append</a></li>
-                <!--li class="button"><a href="#" class="buttons prepend">prepend</a></li-->
+                <li class="button"><a href="#" class="buttons prepend">prepend</a></li>
+                <li class="button"><a href="#" class="buttons trim-head">trim head</a></li>
+                <li class="button"><a href="#" class="buttons trim-tail">trim tail</a></li>
                 <li class="button"><a href="#" class="buttons start-stop">pause</a></li>
             </ul>
         </div>
@@ -44,6 +46,7 @@ require({
     baseUrl: './',
     paths: {
         'physicsjs': './physicsjs-full',
+        'hammer': '../lib/hammer',
         'masonry': './masonryLayout',
         'jquery': '../lib/jquery-1.9.1'
     }
@@ -51,7 +54,7 @@ require({
     'jquery',
     'physicsjs',
     './satnav',
-    './demo-mouse-events',
+    './follow-touch',
     './sims/masonry'
 ], function(
     $,
@@ -87,9 +90,7 @@ require({
                     angleIndicator: 'hsla(0, 0%, 0%, 0)'
                 }
             }
-        })
-        ,mouseEvents
-        ;
+        });
 
     // resize events
     $(window).on('resize', function(){
@@ -154,9 +155,23 @@ require({
 		});
     });
 
-    $(function(){
+	// trim head
+	$(document).on('click', '.trim-head', function(e){
+        e.preventDefault();
+		currentWorld.publish({
+			topic: 'masonry:trim-head'
+		});
+    });
 
-        mouseEvents = Physics.behavior('demo-mouse-events', { el: '#viewport' });
+	// trim tail
+	$(document).on('click', '.trim-tail', function(e){
+        e.preventDefault();
+		currentWorld.publish({
+			topic: 'masonry:trim-tail'
+		});
+    });
+
+    $(function(){
 
         // start the ticker
         Physics.util.ticker.start();
@@ -186,7 +201,7 @@ require({
                     // initialize the world
                     currentWorld = Physics( examples[ idx ] );
                     initWorld( currentWorld );
-                    currentWorld.add( mouseEvents );
+                    //currentWorld.add( mouseEvents );
                     currentWorld.unpause();
                 }
             }

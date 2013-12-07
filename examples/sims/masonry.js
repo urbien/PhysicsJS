@@ -1,11 +1,13 @@
 define([
     
     'jquery',
-	'masonry'
+	'masonry',
+	'hammer'
 
 ], function(
     $,
-	Mason
+	Mason,
+	Hammer
 ) {
     var sim = function( world, Physics ){
 
@@ -19,12 +21,21 @@ define([
 			NUM_COLS = 5,
 			MASONRY_WIDTH = COL_WIDTH * NUM_COLS + INTER_BRICK_MARGIN * (NUM_COLS - 1),
 			LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
-            bounds = calcBounds(),
+            bounds,
+			dogman = Physics.body('circle', {
+				mass: 1,
+				radius: 50
+			}),
+			hammerOptions = {},
+			hammer = new Hammer(container, hammerOptions),
+			touchFollower,
+			/*
             edgeBounce = Physics.behavior('edge-collision-detection', {
                 aabb: bounds,
                 restitution: 0.3,
                 cof: 0.5
-            }),
+            }),*/
+			constrainer = Physics.behavior('verlet-constraints', { iterations: 2 }), // same as default iterations value, but it's good to remember what we can change
 			bodyCount = 0,
 			mason,
 			ADD_FORCES = false;
@@ -32,7 +43,42 @@ define([
 		function calcBounds() {
 			//return Physics.aabb(viewWidth / 2 - LEFT_WALL_OFFSET_FROM_CENTER | 0, 0, viewWidth / 2 + LEFT_WALL_OFFSET_FROM_CENTER | 0, viewHeight);
 			// return Physics.aabb(viewWidth / 2 | 0, 0, viewWidth / 2 + MASONRY_WIDTH, viewHeight);
-			return Physics.aabb(0, 0, viewWidth / 2, viewHeight);
+			bounds = Physics.aabb(0, 0, viewWidth / 2, viewHeight);
+			dogman.state.pos.set(bounds._pos.get(0), viewHeight * 10);
+			dogman.state.pos.lock({
+				x: 0
+			});
+			
+  		    dogman.state.vel.lock({
+			    x: 0
+			});
+
+			dogman.state.acc.lock({
+			    x: 0
+			});
+			
+			return ;
+		}
+
+		function removeBricks(n, fromTheHead) {
+			n = n || 1;
+			n = Math.min(n, mason.bricks.length);
+			if (n) {
+				var bricks = fromTheHead ? mason.bricks.slice(0, n) : mason.bricks.slice(mason.bricks.length - n),
+					el;
+					
+				world.remove(bricks);
+				world.subscribe('render', function removeElements() {
+					world.unsubscribe('render', removeElements);
+					while (n--) {
+						el = bricks[n].view;
+						if (el.parentNode)
+							el.parentNode.removeChild(el);
+					}					
+					
+					mason.removed(bricks);
+				});	
+			}
 		}
 		
 		function addBricks(n, prepend) {
@@ -47,11 +93,8 @@ define([
 			
 		function addBrick(width, height) {
 			var body = Physics.body('convex-polygon', {
-				lock: {
-					x: true
-				},
 				name: 'blah' + bodyCount++,
-				//mass: width * height,
+				mass: 0.1,
 				vertices: [
 					{x: 0, y: height},
 					{x: width, y: height},
@@ -90,7 +133,10 @@ define([
 		}		
 
 		function init() {
+			calcBounds();
 			mason = new Mason({
+				dogman: dogman,
+				constrainer: constrainer,
 				gutterWidth: INTER_BRICK_MARGIN,
 				bounds: bounds
 			});
@@ -105,14 +151,35 @@ define([
         // }).trigger('resize');
 
 		// world.add( Physics.behavior('newtonian', { strength: 10 }) );
-        world.add( Physics.behavior('body-collision-detection', { checkAll: false }) );
-        world.add( Physics.behavior('sweep-prune') );
-        world.add( Physics.behavior('body-impulse-response') );
-        world.add( edgeBounce );
+		world.add( Physics.integrator('verlet', { drag: 0.01 }) );
+        // world.add( Physics.behavior('body-collision-detection', { checkAll: false }) );
+        // world.add( Physics.behavior('sweep-prune') );
+        // world.add( Physics.behavior('body-impulse-response') );
+        world.add( constrainer ); 
+        // world.add( edgeBounce );
 		
-		world.subscribe('masonry:append', addBricks.bind(null, BATCH_SIZE, false));
-		world.subscribe('masonry:prepend', addBricks.bind(null, BATCH_SIZE, true));		
+		world.subscribe('masonry:append', function() {
+			addBricks(Math.random() * BATCH_SIZE | 0, false);
+		});
 
+		world.subscribe('masonry:prepend', function() {
+			addBricks(Math.random() * BATCH_SIZE | 0, true);
+		});
+
+		world.subscribe('masonry:trim-tail', function() {
+			removeBricks(Math.random() * BATCH_SIZE | 0, false);
+		});
+		
+		world.subscribe('masonry:trim-head', function() {
+			removeBricks(Math.random() * BATCH_SIZE | 0, true);
+		});
+		
+		world._hammer = hammer;
+		touchFollower = Physics.behavior('follow-touch');
+		world.add(touchFollower);
+		touchFollower.addTouchFollower(dogman);
+		world.add(dogman);
+		
 		if (ADD_FORCES) {
 			// add close-distance repulsion
 			world.add( Physics.behavior('distance-based-force', { n: 3, strength: -100 }) );
