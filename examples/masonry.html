@@ -36,7 +36,9 @@
         </div>
     </header>
     <div id="display">
-        <div id="viewport"></div>
+        <div id="viewport" style="-webkit-transform-style:preserve-3d">
+			<div class="group"></div>
+		</div>
     </div>
 
 <!-- Scripts -->
@@ -47,30 +49,26 @@ require({
     paths: {
         'physicsjs': './physicsjs-full',
         'hammer': '../lib/hammer',
-        'masonry': './masonryLayout',
-        'jquery': '../lib/jquery-1.9.1'
+        'masonry': './masonryLayout'
     }
 },[
-    'jquery',
     'physicsjs',
     './satnav',
-    './follow-touch',
     './sims/masonry'
 ], function(
-    $,
     Physics,
     Satnav,
-    examples
+    masonry
 ){
 
-    // each argument after demo-mouse-events is a world object for a demo
-    examples = Array.prototype.slice.call( arguments, 4 );
+	function $() {
+		return document.querySelector.apply(document, arguments);
+	};
 
-    var currentWorld;
-    var $win = $(window)
-        ,viewWidth = $win.width()
-        ,viewHeight = $win.height()
-        ,renderer = Physics.renderer('dom', {
+    var currentWorld,
+		viewWidth = window.innerWidth,
+        viewHeight = window.innerHeight,
+        renderer = Physics.renderer('dom', {
             el: 'viewport',
             width: viewWidth,
             height: viewHeight,
@@ -93,10 +91,10 @@ require({
         });
 
     // resize events
-    $(window).on('resize', function(){
+	window.addEventListener('resize', function(){
 
-        viewWidth = $win.width();
-        viewHeight = $win.height();
+		viewWidth = window.innerWidth;
+        viewHeight = window.innerHeight;
         
         renderer.el.width = viewWidth;
         renderer.el.height = viewHeight;
@@ -104,7 +102,9 @@ require({
         renderer.options.width = viewWidth;
         renderer.options.height = viewHeight;
 
-    }).trigger('resize');
+    });
+	
+	window.dispatchEvent(new Event('resize'));
 
     // initialize a world showing a demo
     function initWorld( world ){
@@ -125,22 +125,27 @@ require({
     }
 
     // play/pause button
-    $(document).on('click', '.start-stop', function(e){
-
+	var playPause = $('.start-stop'),
+		appendBricks = $('.append'),
+		prependBricks = $('.prepend'),
+		trimHead = $('.trim-head'),
+		trimTail = $('.trim-tail');
+		
+	playPause.addEventListener('click', function(e){
         e.preventDefault();
         var paused = currentWorld.isPaused();
 
         if (paused){
-            $(this).text('pause');
+            playPause.textContent = 'pause';
             currentWorld.unpause();
         } else {
-            $(this).text('play');
+            playPause.textContent = 'play';
             currentWorld.pause();
         }
     });
 	
 	// masonry append
-	$(document).on('click', '.append', function(e){
+	appendBricks.addEventListener('click', function(e){
         e.preventDefault();
 		currentWorld.publish({
 			topic: 'masonry:append'
@@ -148,7 +153,7 @@ require({
     });
 
 	// masonry prepend
-	$(document).on('click', '.prepend', function(e){
+	prependBricks.addEventListener('click', function(e){
         e.preventDefault();
 		currentWorld.publish({
 			topic: 'masonry:prepend'
@@ -156,7 +161,7 @@ require({
     });
 
 	// trim head
-	$(document).on('click', '.trim-head', function(e){
+	trimHead.addEventListener('click', function(e){
         e.preventDefault();
 		currentWorld.publish({
 			topic: 'masonry:trim-head'
@@ -164,60 +169,26 @@ require({
     });
 
 	// trim tail
-	$(document).on('click', '.trim-tail', function(e){
+	trimTail.addEventListener('click', function(e){
         e.preventDefault();
 		currentWorld.publish({
 			topic: 'masonry:trim-tail'
 		});
     });
 
-    $(function(){
-
+	function init() {
+		document.removeEventListener('DOMContentLoaded', init);
+	
         // start the ticker
         Physics.util.ticker.start();
 
-        // hashchange event handling
-        Satnav({
-            html5: false, // don't use pushState
-            force: false, // force change event on same route
-            poll: 100 // poll hash every 100ms if polyfilled
-        })
-        .navigate({
-            path: 'demo-{idx}',
-            directions: function(params) {
-                var idx = params.idx;
-
-                $('#examples ul a.btn-demo').removeClass('on');
-                $('#examples ul a[href="#demo-'+idx+'"]').addClass('on');
-
-                if ( idx < examples.length ){
-
-                    if (currentWorld){
-                        // delete the old world
-                        currentWorld.pause();
-                        delete currentWorld;
-                    }
-                    
-                    // initialize the world
-                    currentWorld = Physics( examples[ idx ] );
-                    initWorld( currentWorld );
-                    //currentWorld.add( mouseEvents );
-                    currentWorld.unpause();
-                }
-            }
-        })
-        .otherwise('demo-0') // will route all unmatched paths to #/
-        .change(function(params, old) {
-            var title = $('#examples ul a[href="#demo-'+params.idx+'"]').text();
-
-            if (window._gaq){
-                _gaq.push(['_trackEvent', 'Demos', 'View', title]);
-            }
-        })
-        .go()
-        ;
-    });
-    
+		currentWorld = Physics( masonry );
+		initWorld( currentWorld );
+		//currentWorld.add( mouseEvents );
+		currentWorld.unpause();
+    };
+	
+	init();
 });
 </script>
   

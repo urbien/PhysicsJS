@@ -1,6 +1,5 @@
 /**
-/**
- * PhysicsJS v0.5.3 - 2013-11-25
+ * PhysicsJS v0.5.3 - 2013-12-08
  * A modular, extendable, and easy-to-use physics engine for javascript
  * http://wellcaffeinated.net/PhysicsJS
  *
@@ -39,29 +38,30 @@ Physics.util = {};
 
 /**
  * @license
- * Lo-Dash 2.2.1 (Custom Build) lodash.com/license | Underscore.js 1.5.2 underscorejs.org/LICENSE
+ * Lo-Dash 2.4.1 (Custom Build) lodash.com/license | Underscore.js 1.5.2 underscorejs.org/LICENSE
  * Build: `lodash exports="none" iife="(function(window){%output%;lodash.extend(Physics.util, lodash);}(this));" include="isObject,isFunction,isArray,isPlainObject,uniqueId,each,random,extend,clone,throttle,bind,sortedIndex,shuffle" --minify --output lib/lodash.js`
  */
-;!function(n){function t(n){return typeof n.toString!="function"&&typeof(n+"")=="string"}function e(){}function r(n){n.length=0,O.length<A&&O.push(n)}function o(n,t,e){t||(t=0),typeof e=="undefined"&&(e=n?n.length:0);var r=-1;e=e-t||0;for(var o=Array(0>e?0:e);++r<e;)o[r]=n[t+r];return o}function a(){}function u(n,e,a,i,l){if(a){var c=a(n);if(typeof c!="undefined")return c}if(!v(n))return n;var f=at.call(n);if(!$[f]||!mt.nodeClass&&t(n))return n;var s=bt[f];switch(f){case T:case B:return new s(+n);case L:case M:return new s(n);
-case W:return c=s(n.source,S.exec(n)),c.lastIndex=n.lastIndex,c}if(f=Et(n),e){var p=!i;i||(i=O.pop()||[]),l||(l=O.pop()||[]);for(var g=i.length;g--;)if(i[g]==n)return l[g];c=f?s(n.length):{}}else c=f?o(n):At({},n);return f&&(tt.call(n,"index")&&(c.index=n.index),tt.call(n,"input")&&(c.input=n.input)),e?(i.push(n),l.push(c),(f?_t:Ct)(n,function(n,t){c[t]=u(n,e,a,i,l)}),p&&(r(i),r(l)),c):c}function i(n,t,e){if(typeof n!="function")return j;if(typeof t=="undefined")return n;var r=n.__bindData__||mt.funcNames&&!n.name;
-if(typeof r=="undefined"){var o=P&&Z.call(n);mt.funcNames||!o||C.test(o)||(r=!0),(mt.funcNames||!r)&&(r=!mt.funcDecomp||P.test(o),jt(n,r))}if(true!==r&&r&&1&r[1])return n;switch(e){case 1:return function(e){return n.call(t,e)};case 2:return function(e,r){return n.call(t,e,r)};case 3:return function(e,r,o){return n.call(t,e,r,o)};case 4:return function(e,r,o,a){return n.call(t,e,r,o,a)}}return d(n,t)}function l(n,e,o,a,u,i){if(o){var c=o(n,e);if(typeof c!="undefined")return!!c}if(n===e)return 0!==n||1/n==1/e;
-if(n===n&&!(n&&G[typeof n]||e&&G[typeof e]))return!1;if(null==n||null==e)return n===e;var f=at.call(n),s=at.call(e);if(f==F&&(f=R),s==F&&(s=R),f!=s)return!1;switch(f){case T:case B:return+n==+e;case L:return n!=+n?e!=+e:0==n?1/n==1/e:n==+e;case W:case M:return n==e+""}if(s=f==I,!s){if(tt.call(n,"__wrapped__")||tt.call(e,"__wrapped__"))return l(n.__wrapped__||n,e.__wrapped__||e,o,a,u,i);if(f!=R||!mt.nodeClass&&(t(n)||t(e)))return!1;var f=!mt.argsObject&&g(n)?Object:n.constructor,p=!mt.argsObject&&g(e)?Object:e.constructor;
-if(f!=p&&!(y(f)&&f instanceof f&&y(p)&&p instanceof p))return!1}for(p=!u,u||(u=O.pop()||[]),i||(i=O.pop()||[]),f=u.length;f--;)if(u[f]==n)return i[f]==e;var v=0,c=!0;if(u.push(n),i.push(e),s){if(f=n.length,v=e.length,c=v==n.length,!c&&!a)return c;for(;v--;)if(s=f,p=e[v],a)for(;s--&&!(c=l(n[s],p,o,a,u,i)););else if(!(c=l(n[v],p,o,a,u,i)))break;return c}return St(e,function(t,e,r){return tt.call(r,e)?(v++,c=tt.call(n,e)&&l(n[e],t,o,a,u,i)):void 0}),c&&!a&&St(n,function(n,t,e){return tt.call(e,t)?c=-1<--v:void 0
-}),p&&(r(u),r(i)),c}function c(n,t,e,r,o,a){var u=1&t,i=2&t,l=4&t,f=8&t,p=16&t,g=32&t,h=n;if(!i&&!y(n))throw new TypeError;p&&!e.length&&(t&=-17,p=e=!1),g&&!r.length&&(t&=-33,g=r=!1);var b=n&&n.__bindData__;if(b)return!u||1&b[1]||(b[4]=o),!u&&1&b[1]&&(t|=8),!l||4&b[1]||(b[5]=a),p&&rt.apply(b[2]||(b[2]=[]),e),g&&rt.apply(b[3]||(b[3]=[]),r),b[1]|=t,c.apply(null,b);if(!u||i||l||g||!(mt.fastBind||lt&&p))m=function(){var y=arguments,b=u?o:this;return(l||p||g)&&(y=vt.call(y),p&&ut.apply(y,e),g&&rt.apply(y,r),l&&y.length<a)?(t|=16,c(n,f?t:-4&t,y,null,o,a)):(i&&(n=b[h]),this instanceof m?(b=s(n.prototype),y=n.apply(b,y),v(y)?y:b):n.apply(b,y))
-};else{if(p){var d=[o];rt.apply(d,e)}var m=p?lt.apply(n,d):lt.call(n,o)}return jt(m,vt.call(arguments)),m}function f(){q.h=D,q.b=q.c=q.g=q.i="",q.e="t",q.j=!0;for(var n,t=0;n=arguments[t];t++)for(var e in n)q[e]=n[e];t=q.a,q.d=/^[^,]+/.exec(t)[0],n=Function,t="return function("+t+"){",e=q;var r="var n,t="+e.d+",E="+e.e+";if(!t)return E;"+e.i+";";e.b?(r+="var u=t.length;n=-1;if("+e.b+"){",mt.unindexedChars&&(r+="if(s(t)){t=t.split('')}"),r+="while(++n<u){"+e.g+";}}else{"):mt.nonEnumArgs&&(r+="var u=t.length;n=-1;if(u&&p(t)){while(++n<u){n+='';"+e.g+";}}else{"),mt.enumPrototypes&&(r+="var G=typeof t=='function';"),mt.enumErrorProps&&(r+="var F=t===k||t instanceof Error;");
-var o=[];if(mt.enumPrototypes&&o.push('!(G&&n=="prototype")'),mt.enumErrorProps&&o.push('!(F&&(n=="message"||n=="name"))'),e.j&&e.f)r+="var C=-1,D=B[typeof t]&&v(t),u=D?D.length:0;while(++C<u){n=D[C];",o.length&&(r+="if("+o.join("&&")+"){"),r+=e.g+";",o.length&&(r+="}"),r+="}";else if(r+="for(n in t){",e.j&&o.push("m.call(t, n)"),o.length&&(r+="if("+o.join("&&")+"){"),r+=e.g+";",o.length&&(r+="}"),r+="}",mt.nonEnumShadows){for(r+="if(t!==A){var i=t.constructor,r=t===(i&&i.prototype),f=t===J?I:t===k?j:L.call(t),x=y[f];",k=0;7>k;k++)r+="n='"+e.h[k]+"';if((!(r&&x[n])&&m.call(t,n))",e.j||(r+="||(!x[n]&&t[n]!==A[n])"),r+="){"+e.g+"}";
-r+="}"}return(e.b||mt.nonEnumArgs)&&(r+="}"),r+=e.c+";return E",n("d,j,k,m,o,p,q,s,v,A,B,y,I,J,L",t+r+"}")(i,N,V,tt,_,g,Et,h,q.f,Q,G,dt,M,U,at)}function s(n){return v(n)?ct(n):{}}function p(n){var e,r;return!n||at.call(n)!=R||(e=n.constructor,y(e)&&!(e instanceof e))||!mt.argsClass&&g(n)||!mt.nodeClass&&t(n)?!1:mt.ownLast?(St(n,function(n,t,e){return r=tt.call(e,t),!1}),false!==r):(St(n,function(n,t){r=t}),typeof r=="undefined"||tt.call(n,r))}function g(n){return n&&typeof n=="object"&&typeof n.length=="number"&&at.call(n)==F||!1
-}function y(n){return typeof n=="function"}function v(n){return!(!n||!G[typeof n])}function h(n){return typeof n=="string"||at.call(n)==M}function b(n,t,e){if(t&&typeof e=="undefined"&&Et(n)){e=-1;for(var r=n.length;++e<r&&false!==t(n[e],e,n););}else _t(n,t,e);return n}function d(n,t){return 2<arguments.length?c(n,17,vt.call(arguments,2),null,t):c(n,1,null,null,t)}function m(n,t,e){var r,o,a,u,i,l,c,f=0,s=!1,p=!0;if(!y(n))throw new TypeError;if(t=pt(0,t)||0,true===e)var g=!0,p=!1;else v(e)&&(g=e.leading,s="maxWait"in e&&(pt(t,e.maxWait)||0),p="trailing"in e?e.trailing:p);
-var h=function(){var e=t-(et()-u);0<e?l=setTimeout(h,e):(o&&clearTimeout(o),e=c,o=l=c=w,e&&(f=et(),a=n.apply(i,r)))},b=function(){l&&clearTimeout(l),o=l=c=w,(p||s!==t)&&(f=et(),a=n.apply(i,r))};return function(){if(r=arguments,u=et(),i=this,c=p&&(l||!g),false===s)var e=g&&!l;else{o||g||(f=u);var y=s-(u-f);0<y?o||(o=setTimeout(b,y)):(o&&(o=clearTimeout(o)),f=u,a=n.apply(i,r))}return l||t===s||(l=setTimeout(h,t)),e&&(a=n.apply(i,r)),a}}function j(n){return n}function E(n,t,e){var r=null==n,o=null==t;return null==e&&(typeof n=="boolean"&&o?(e=n,n=1):o||typeof t!="boolean"||(e=t,o=!0)),r&&o&&(t=1),n=+n||0,o?(t=n,n=0):t=+t||0,r=yt(),e||n%1||t%1?gt(n+r*(t-n+parseFloat("1e-"+((r+"").length-1))),t):n+Y(r*(t-n+1))
-}var w,O=[],x=0,_={},A=40,S=/\w*$/,C=/^function[ \n\r\t]+\w/,P=/\bthis\b/,D="constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf".split(" "),F="[object Arguments]",I="[object Array]",T="[object Boolean]",B="[object Date]",N="[object Error]",L="[object Number]",R="[object Object]",W="[object RegExp]",M="[object String]",$={"[object Function]":!1};$[F]=$[I]=$[T]=$[B]=$[L]=$[R]=$[W]=$[M]=!0;var z={leading:!1,maxWait:0,trailing:!1},K={configurable:!1,enumerable:!1,value:null,writable:!1},q={a:"",b:null,c:"",d:"",e:"",v:null,g:"",h:null,support:null,i:"",j:!1},G={"boolean":!1,"function":!0,object:!0,number:!1,string:!1,undefined:!1},J=G[typeof n]&&n||this,H=[],V=Error.prototype,Q=Object.prototype,U=String.prototype,X=RegExp("^"+(Q.valueOf+"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/valueOf|for [^\]]+/g,".+?")+"$"),Y=Math.floor,Z=Function.prototype.toString,nt=X.test(nt=Object.getPrototypeOf)&&nt,tt=Q.hasOwnProperty,et=X.test(et=Date.now)&&et||function(){return+new Date
-},rt=H.push,ot=Q.propertyIsEnumerable,at=Q.toString,ut=H.unshift,it=function(){try{var n={},t=X.test(t=Object.defineProperty)&&t,e=t(n,n,n)&&t}catch(r){}return e}(),lt=X.test(lt=at.bind)&&lt,ct=X.test(ct=Object.create)&&ct,ft=X.test(ft=Array.isArray)&&ft,st=X.test(st=Object.keys)&&st,pt=Math.max,gt=Math.min,yt=Math.random,vt=H.slice;n=X.test(J.attachEvent);var ht=lt&&!/\n|true/.test(lt+n),bt={};bt[I]=Array,bt[T]=Boolean,bt[B]=Date,bt["[object Function]"]=Function,bt[R]=Object,bt[L]=Number,bt[W]=RegExp,bt[M]=String;
-var dt={};dt[I]=dt[B]=dt[L]={constructor:!0,toLocaleString:!0,toString:!0,valueOf:!0},dt[T]=dt[M]={constructor:!0,toString:!0,valueOf:!0},dt[N]=dt["[object Function]"]=dt[W]={constructor:!0,toString:!0},dt[R]={constructor:!0},function(){for(var n=D.length;n--;){var t,e=D[n];for(t in dt)tt.call(dt,t)&&!tt.call(dt[t],e)&&(dt[t][e]=!1)}}();var mt=a.support={};!function(){var n=function(){this.x=1},t={0:1,length:1},e=[];n.prototype={valueOf:1,y:1};for(var r in new n)e.push(r);for(r in arguments);mt.argsClass=at.call(arguments)==F,mt.argsObject=arguments.constructor==Object&&!(arguments instanceof Array),mt.enumErrorProps=ot.call(V,"message")||ot.call(V,"name"),mt.enumPrototypes=ot.call(n,"prototype"),mt.fastBind=lt&&!ht,mt.funcDecomp=!X.test(J.WinRTError)&&P.test(function(){return this
-}),mt.funcNames=typeof Function.name=="string",mt.nonEnumArgs=0!=r,mt.nonEnumShadows=!/valueOf/.test(e),mt.ownLast="x"!=e[0],mt.spliceObjects=(H.splice.call(t,0,1),!t[0]),mt.unindexedChars="xx"!="x"[0]+Object("x")[0];try{mt.nodeClass=!(at.call(document)==R&&!({toString:0}+""))}catch(o){mt.nodeClass=!0}}(1),ct||(s=function(n){if(v(n)){e.prototype=n;var t=new e;e.prototype=null}return t||{}});var jt=it?function(n,t){K.value=t,it(n,"__bindData__",K)}:e;mt.argsClass||(g=function(n){return n&&typeof n=="object"&&typeof n.length=="number"&&tt.call(n,"callee")||!1
-});var Et=ft||function(n){return n&&typeof n=="object"&&typeof n.length=="number"&&at.call(n)==I||!1},wt=f({a:"z",e:"[]",i:"if(!(B[typeof z]))return E",g:"E.push(n)"}),Ot=st?function(n){return v(n)?mt.enumPrototypes&&typeof n=="function"||mt.nonEnumArgs&&n.length&&g(n)?wt(n):st(n):[]}:wt,ft={a:"g,e,K",i:"e=e&&typeof K=='undefined'?e:d(e,K,3)",b:"typeof u=='number'",v:Ot,g:"if(e(t[n],n,g)===false)return E"};n={a:"z,H,l",i:"var a=arguments,b=0,c=typeof l=='number'?2:a.length;while(++b<c){t=a[b];if(t&&B[typeof t]){",v:Ot,g:"if(typeof E[n]=='undefined')E[n]=t[n]",c:"}}"};
-var xt={i:"if(!B[typeof t])return E;"+ft.i,b:!1},_t=f(ft),At=f(n,{i:n.i.replace(";",";if(c>3&&typeof a[c-2]=='function'){var e=d(a[--c-1],a[c--],2)}else if(c>2&&typeof a[c-1]=='function'){e=a[--c]}"),g:"E[n]=e?e(E[n],t[n]):t[n]"}),St=f(ft,xt,{j:!1}),Ct=f(ft,xt);y(/x/)&&(y=function(n){return typeof n=="function"&&"[object Function]"==at.call(n)}),ft=nt?function(n){if(!n||at.call(n)!=R||!mt.argsClass&&g(n))return!1;var t=n.valueOf,e=typeof t=="function"&&(e=nt(t))&&nt(e);return e?n==e||nt(n)==e:p(n)
-}:p,a.assign=At,a.bind=d,a.createCallback=function(n,t,e){var r=typeof n;if(null==n||"function"==r)return i(n,t,e);if("object"!=r)return function(t){return t[n]};var o=Ot(n),a=o[0],u=n[a];return 1!=o.length||u!==u||v(u)?function(t){for(var e=o.length,r=!1;e--&&(r=l(t[o[e]],n[o[e]],null,!0)););return r}:function(n){return n=n[a],u===n&&(0!==u||1/u==1/n)}},a.debounce=m,a.forEach=b,a.forIn=St,a.forOwn=Ct,a.keys=Ot,a.shuffle=function(n){var t=-1,e=n?n.length:0,r=Array(typeof e=="number"?e:0);return b(n,function(n){var e=E(++t);
-r[t]=r[e],r[e]=n}),r},a.throttle=function(n,t,e){var r=!0,o=!0;if(!y(n))throw new TypeError;return false===e?r=!1:v(e)&&(r="leading"in e?e.leading:r,o="trailing"in e?e.trailing:o),z.leading=r,z.maxWait=t,z.trailing=o,m(n,t,z)},a.each=b,a.extend=At,a.clone=function(n,t,e,r){return typeof t!="boolean"&&null!=t&&(r=e,e=t,t=!1),u(n,t,typeof e=="function"&&i(e,r,1))},a.identity=j,a.isArguments=g,a.isArray=Et,a.isFunction=y,a.isObject=v,a.isPlainObject=ft,a.isString=h,a.random=E,a.sortedIndex=function(n,t,e,r){var o=0,u=n?n.length:o;
-for(e=e?a.createCallback(e,r,1):j,t=e(t);o<u;)r=o+u>>>1,e(n[r])<t?o=r+1:u=r;return o},a.uniqueId=function(n){var t=++x;return(null==n?"":n)+""+t},a.VERSION="2.2.1",a.extend(Physics.util,a)}(this);
+;!function(n){function t(n){return typeof n.toString!="function"&&typeof(n+"")=="string"}function e(n){n.length=0,S.length<P&&S.push(n)}function r(n,t,e){t||(t=0),typeof e=="undefined"&&(e=n?n.length:0);var r=-1;e=e-t||0;for(var o=Array(0>e?0:e);++r<e;)o[r]=n[t+r];return o}function o(){}function u(n){function t(){if(o){var n=r(o);at.apply(n,arguments)}if(this instanceof t){var a=i(e.prototype),n=e.apply(a,n||arguments);return b(n)?n:a}return e.apply(u,n||arguments)}var e=n[0],o=n[2],u=n[4];return dt(t,n),t
+}function a(n,o,u,i,c){if(u){var l=u(n);if(typeof l!="undefined")return l}if(!b(n))return n;var f=nt.call(n);if(!q[f]||!mt.nodeClass&&t(n))return n;var s=ht[f];switch(f){case N:case R:return new s(+n);case M:case K:return new s(n);case z:return l=s(n.source,D.exec(n)),l.lastIndex=n.lastIndex,l}if(f=jt(n),o){var p=!i;i||(i=S.pop()||[]),c||(c=S.pop()||[]);for(var g=i.length;g--;)if(i[g]==n)return c[g];l=f?s(n.length):{}}else l=f?r(n):_t({},n);return f&&(ut.call(n,"index")&&(l.index=n.index),ut.call(n,"input")&&(l.input=n.input)),o?(i.push(n),c.push(l),(f?Ot:At)(n,function(n,t){l[t]=a(n,o,u,i,c)
+}),p&&(e(i),e(c)),l):l}function i(n){return b(n)?ft(n):{}}function c(n,t,e){if(typeof n!="function")return E;if(typeof t=="undefined"||!("prototype"in n))return n;var r=n.__bindData__;if(typeof r=="undefined"&&(mt.funcNames&&(r=!n.name),r=r||!mt.funcDecomp,!r)){var o=rt.call(n);mt.funcNames||(r=!T.test(o)),r||(r=F.test(o),dt(n,r))}if(false===r||true!==r&&1&r[1])return n;switch(e){case 1:return function(e){return n.call(t,e)};case 2:return function(e,r){return n.call(t,e,r)};case 3:return function(e,r,o){return n.call(t,e,r,o)
+};case 4:return function(e,r,o,u){return n.call(t,e,r,o,u)}}return j(n,t)}function l(n){function t(){var n=s?c:this;if(u){var h=r(u);at.apply(h,arguments)}return(a||g)&&(h||(h=r(arguments)),a&&at.apply(h,a),g&&h.length<f)?(o|=16,l([e,y?o:-4&o,h,null,c,f])):(h||(h=arguments),p&&(e=n[v]),this instanceof t?(n=i(e.prototype),h=e.apply(n,h),b(h)?h:n):e.apply(n,h))}var e=n[0],o=n[1],u=n[2],a=n[3],c=n[4],f=n[5],s=1&o,p=2&o,g=4&o,y=8&o,v=e;return dt(t,n),t}function f(n,r,o,u,a,i){if(o){var c=o(n,r);if(typeof c!="undefined")return!!c
+}if(n===r)return 0!==n||1/n==1/r;if(n===n&&!(n&&V[typeof n]||r&&V[typeof r]))return false;if(null==n||null==r)return n===r;var l=nt.call(n),s=nt.call(r);if(l==B&&(l=$),s==B&&(s=$),l!=s)return false;switch(l){case N:case R:return+n==+r;case M:return n!=+n?r!=+r:0==n?1/n==1/r:n==+r;case z:case K:return n==r+""}if(s=l==L,!s){var p=ut.call(n,"__wrapped__"),g=ut.call(r,"__wrapped__");if(p||g)return f(p?n.__wrapped__:n,g?r.__wrapped__:r,o,u,a,i);if(l!=$||!mt.nodeClass&&(t(n)||t(r)))return false;if(l=!mt.argsObject&&v(n)?Object:n.constructor,p=!mt.argsObject&&v(r)?Object:r.constructor,l!=p&&!(h(l)&&l instanceof l&&h(p)&&p instanceof p)&&"constructor"in n&&"constructor"in r)return false
+}for(l=!a,a||(a=S.pop()||[]),i||(i=S.pop()||[]),p=a.length;p--;)if(a[p]==n)return i[p]==r;var y=0,c=true;if(a.push(n),i.push(r),s){if(p=n.length,y=r.length,(c=y==p)||u)for(;y--;)if(s=p,g=r[y],u)for(;s--&&!(c=f(n[s],g,o,u,a,i)););else if(!(c=f(n[y],g,o,u,a,i)))break}else St(r,function(t,e,r){return ut.call(r,e)?(y++,c=ut.call(n,e)&&f(n[e],t,o,u,a,i)):void 0}),c&&!u&&St(n,function(n,t,e){return ut.call(e,t)?c=-1<--y:void 0});return a.pop(),i.pop(),l&&(e(a),e(i)),c}function s(n,t,e,o,a,i){var c=1&t,f=4&t,p=16&t,g=32&t;
+if(!(2&t||h(n)))throw new TypeError;p&&!e.length&&(t&=-17,p=e=false),g&&!o.length&&(t&=-33,g=o=false);var y=n&&n.__bindData__;return y&&true!==y?(y=r(y),y[2]&&(y[2]=r(y[2])),y[3]&&(y[3]=r(y[3])),!c||1&y[1]||(y[4]=a),!c&&1&y[1]&&(t|=8),!f||4&y[1]||(y[5]=i),p&&at.apply(y[2]||(y[2]=[]),e),g&&ct.apply(y[3]||(y[3]=[]),o),y[1]|=t,s.apply(null,y)):(1==t||17===t?u:l)([n,t,e,o,a,i])}function p(){H.h=I,H.b=H.c=H.g=H.i="",H.e="t",H.j=true;for(var n,t=0;n=arguments[t];t++)for(var e in n)H[e]=n[e];t=H.a,H.d=/^[^,]+/.exec(t)[0],n=Function,t="return function("+t+"){",e=H;
+var r="var n,t="+e.d+",E="+e.e+";if(!t)return E;"+e.i+";";e.b?(r+="var u=t.length;n=-1;if("+e.b+"){",mt.unindexedChars&&(r+="if(s(t)){t=t.split('')}"),r+="while(++n<u){"+e.g+";}}else{"):mt.nonEnumArgs&&(r+="var u=t.length;n=-1;if(u&&p(t)){while(++n<u){n+='';"+e.g+";}}else{"),mt.enumPrototypes&&(r+="var G=typeof t=='function';"),mt.enumErrorProps&&(r+="var F=t===k||t instanceof Error;");var o=[];if(mt.enumPrototypes&&o.push('!(G&&n=="prototype")'),mt.enumErrorProps&&o.push('!(F&&(n=="message"||n=="name"))'),e.j&&e.f)r+="var C=-1,D=B[typeof t]&&v(t),u=D?D.length:0;while(++C<u){n=D[C];",o.length&&(r+="if("+o.join("&&")+"){"),r+=e.g+";",o.length&&(r+="}"),r+="}";
+else if(r+="for(n in t){",e.j&&o.push("m.call(t, n)"),o.length&&(r+="if("+o.join("&&")+"){"),r+=e.g+";",o.length&&(r+="}"),r+="}",mt.nonEnumShadows){for(r+="if(t!==A){var i=t.constructor,r=t===(i&&i.prototype),f=t===J?I:t===k?j:L.call(t),x=y[f];",k=0;7>k;k++)r+="n='"+e.h[k]+"';if((!(r&&x[n])&&m.call(t,n))",e.j||(r+="||(!x[n]&&t[n]!==A[n])"),r+="){"+e.g+"}";r+="}"}return(e.b||mt.nonEnumArgs)&&(r+="}"),r+=e.c+";return E",n("d,j,k,m,o,p,q,s,v,A,B,y,I,J,L",t+r+"}")(c,W,X,ut,C,v,jt,m,H.f,Y,V,bt,K,Z,nt)
+}function g(n){return typeof n=="function"&&tt.test(n)}function y(n){var e,r;return!n||nt.call(n)!=$||(e=n.constructor,h(e)&&!(e instanceof e))||!mt.argsClass&&v(n)||!mt.nodeClass&&t(n)?false:mt.ownLast?(St(n,function(n,t,e){return r=ut.call(e,t),false}),false!==r):(St(n,function(n,t){r=t}),typeof r=="undefined"||ut.call(n,r))}function v(n){return n&&typeof n=="object"&&typeof n.length=="number"&&nt.call(n)==B||false}function h(n){return typeof n=="function"}function b(n){return!(!n||!V[typeof n])}function m(n){return typeof n=="string"||n&&typeof n=="object"&&nt.call(n)==K||false
+}function d(n,t,e){if(t&&typeof e=="undefined"&&jt(n)){e=-1;for(var r=n.length;++e<r&&false!==t(n[e],e,n););}else Ot(n,t,e);return n}function j(n,t){return 2<arguments.length?s(n,17,r(arguments,2),null,t):s(n,1,null,null,t)}function w(n,t,e){var r,o,u,a,i,c,l,f=0,s=false,p=true;if(!h(n))throw new TypeError;if(t=gt(0,t)||0,true===e)var g=true,p=false;else b(e)&&(g=e.leading,s="maxWait"in e&&(gt(t,e.maxWait)||0),p="trailing"in e?e.trailing:p);var y=function(){var e=t-(Ct()-a);0<e?c=setTimeout(y,e):(o&&clearTimeout(o),e=l,o=c=l=_,e&&(f=Ct(),u=n.apply(i,r),c||o||(r=i=null)))
+},v=function(){c&&clearTimeout(c),o=c=l=_,(p||s!==t)&&(f=Ct(),u=n.apply(i,r),c||o||(r=i=null))};return function(){if(r=arguments,a=Ct(),i=this,l=p&&(c||!g),false===s)var e=g&&!c;else{o||g||(f=a);var h=s-(a-f),b=0>=h;b?(o&&(o=clearTimeout(o)),f=a,u=n.apply(i,r)):o||(o=setTimeout(v,h))}return b&&c?c=clearTimeout(c):c||t===s||(c=setTimeout(y,t)),e&&(b=true,u=n.apply(i,r)),!b||c||o||(r=i=null),u}}function E(n){return n}function x(){}function O(n){return function(t){return t[n]}}var _,S=[],A=0,C={},P=40,D=/\w*$/,T=/^\s*function[ \n\r\t]+\w/,F=/\bthis\b/,I="constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf".split(" "),B="[object Arguments]",L="[object Array]",N="[object Boolean]",R="[object Date]",W="[object Error]",M="[object Number]",$="[object Object]",z="[object RegExp]",K="[object String]",q={"[object Function]":false};
+q[B]=q[L]=q[N]=q[R]=q[M]=q[$]=q[z]=q[K]=true;var G={leading:false,maxWait:0,trailing:false},J={configurable:false,enumerable:false,value:null,writable:false},H={a:"",b:null,c:"",d:"",e:"",v:null,g:"",h:null,support:null,i:"",j:false},V={"boolean":false,"function":true,object:true,number:false,string:false,undefined:false},Q=V[typeof n]&&n||this;n=V[typeof global]&&global,!n||n.global!==n&&n.window!==n||(Q=n);var U=[],X=Error.prototype,Y=Object.prototype,Z=String.prototype,nt=Y.toString,tt=RegExp("^"+(nt+"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/toString| for [^\]]+/g,".*?")+"$"),et=Math.floor,rt=Function.prototype.toString,ot=g(ot=Object.getPrototypeOf)&&ot,ut=Y.hasOwnProperty,at=U.push,it=Y.propertyIsEnumerable,ct=U.unshift,lt=function(){try{var n={},t=g(t=Object.defineProperty)&&t,e=t(n,n,n)&&t
+}catch(r){}return e}(),ft=g(ft=Object.create)&&ft,st=g(st=Array.isArray)&&st,pt=g(pt=Object.keys)&&pt,gt=Math.max,yt=Math.min,vt=Math.random,ht={};ht[L]=Array,ht[N]=Boolean,ht[R]=Date,ht["[object Function]"]=Function,ht[$]=Object,ht[M]=Number,ht[z]=RegExp,ht[K]=String;var bt={};bt[L]=bt[R]=bt[M]={constructor:true,toLocaleString:true,toString:true,valueOf:true},bt[N]=bt[K]={constructor:true,toString:true,valueOf:true},bt[W]=bt["[object Function]"]=bt[z]={constructor:true,toString:true},bt[$]={constructor:true},function(){for(var n=I.length;n--;){var t,e=I[n];
+for(t in bt)ut.call(bt,t)&&!ut.call(bt[t],e)&&(bt[t][e]=false)}}();var mt=o.support={};!function(){var n=function(){this.x=1},t={0:1,length:1},e=[];n.prototype={valueOf:1,y:1};for(var r in new n)e.push(r);for(r in arguments);mt.argsClass=nt.call(arguments)==B,mt.argsObject=arguments.constructor==Object&&!(arguments instanceof Array),mt.enumErrorProps=it.call(X,"message")||it.call(X,"name"),mt.enumPrototypes=it.call(n,"prototype"),mt.funcDecomp=!g(Q.WinRTError)&&F.test(function(){return this}),mt.funcNames=typeof Function.name=="string",mt.nonEnumArgs=0!=r,mt.nonEnumShadows=!/valueOf/.test(e),mt.ownLast="x"!=e[0],mt.spliceObjects=(U.splice.call(t,0,1),!t[0]),mt.unindexedChars="xx"!="x"[0]+Object("x")[0];
+try{mt.nodeClass=!(nt.call(document)==$&&!({toString:0}+""))}catch(o){mt.nodeClass=true}}(1),ft||(i=function(){function n(){}return function(t){if(b(t)){n.prototype=t;var e=new n;n.prototype=null}return e||Q.Object()}}());var dt=lt?function(n,t){J.value=t,lt(n,"__bindData__",J)}:x;mt.argsClass||(v=function(n){return n&&typeof n=="object"&&typeof n.length=="number"&&ut.call(n,"callee")&&!it.call(n,"callee")||false});var jt=st||function(n){return n&&typeof n=="object"&&typeof n.length=="number"&&nt.call(n)==L||false
+},wt=p({a:"z",e:"[]",i:"if(!(B[typeof z]))return E",g:"E.push(n)"}),Et=pt?function(n){return b(n)?mt.enumPrototypes&&typeof n=="function"||mt.nonEnumArgs&&n.length&&v(n)?wt(n):pt(n):[]}:wt,st={a:"g,e,K",i:"e=e&&typeof K=='undefined'?e:d(e,K,3)",b:"typeof u=='number'",v:Et,g:"if(e(t[n],n,g)===false)return E"};n={a:"z,H,l",i:"var a=arguments,b=0,c=typeof l=='number'?2:a.length;while(++b<c){t=a[b];if(t&&B[typeof t]){",v:Et,g:"if(typeof E[n]=='undefined')E[n]=t[n]",c:"}}"};var xt={i:"if(!B[typeof t])return E;"+st.i,b:false},Ot=p(st),_t=p(n,{i:n.i.replace(";",";if(c>3&&typeof a[c-2]=='function'){var e=d(a[--c-1],a[c--],2)}else if(c>2&&typeof a[c-1]=='function'){e=a[--c]}"),g:"E[n]=e?e(E[n],t[n]):t[n]"}),St=p(st,xt,{j:false}),At=p(st,xt);
+h(/x/)&&(h=function(n){return typeof n=="function"&&"[object Function]"==nt.call(n)});var st=ot?function(n){if(!n||nt.call(n)!=$||!mt.argsClass&&v(n))return false;var t=n.valueOf,e=g(t)&&(e=ot(t))&&ot(e);return e?n==e||ot(n)==e:y(n)}:y,Ct=g(Ct=Date.now)&&Ct||function(){return(new Date).getTime()};o.assign=_t,o.bind=j,o.createCallback=function(n,t,e){var r=typeof n;if(null==n||"function"==r)return c(n,t,e);if("object"!=r)return O(n);var o=Et(n),u=o[0],a=n[u];return 1!=o.length||a!==a||b(a)?function(t){for(var e=o.length,r=false;e--&&(r=f(t[o[e]],n[o[e]],null,true)););return r
+}:function(n){return n=n[u],a===n&&(0!==a||1/a==1/n)}},o.debounce=w,o.forEach=d,o.forIn=St,o.forOwn=At,o.keys=Et,o.property=O,o.shuffle=function(n){var t=-1,e=n?n.length:0,r=Array(typeof e=="number"?e:0);return d(n,function(n){var e;e=++t,e=0+et(vt()*(e-0+1)),r[t]=r[e],r[e]=n}),r},o.throttle=function(n,t,e){var r=true,o=true;if(!h(n))throw new TypeError;return false===e?r=false:b(e)&&(r="leading"in e?e.leading:r,o="trailing"in e?e.trailing:o),G.leading=r,G.maxWait=t,G.trailing=o,w(n,t,G)},o.each=d,o.extend=_t,o.clone=function(n,t,e,r){return typeof t!="boolean"&&null!=t&&(r=e,e=t,t=false),a(n,t,typeof e=="function"&&c(e,r,1))
+},o.identity=E,o.isArguments=v,o.isArray=jt,o.isFunction=h,o.isObject=b,o.isPlainObject=st,o.isString=m,o.noop=x,o.now=Ct,o.random=function(n,t,e){var r=null==n,o=null==t;return null==e&&(typeof n=="boolean"&&o?(e=n,n=1):o||typeof t!="boolean"||(e=t,o=true)),r&&o&&(t=1),n=+n||0,o?(t=n,n=0):t=+t||0,e||n%1||t%1?(e=vt(),yt(n+e*(t-n+parseFloat("1e-"+((e+"").length-1))),t)):n+et(vt()*(t-n+1))},o.sortedIndex=function(n,t,e,r){var u=0,a=n?n.length:u;for(e=e?o.createCallback(e,r,1):E,t=e(t);u<a;)r=u+a>>>1,e(n[r])<t?u=r+1:a=r;
+return u},o.uniqueId=function(n){var t=++A;return(null==n?"":n)+""+t},o.VERSION="2.4.1",o.extend(Physics.util,o)}(this);
 
 // ---
 // inside: src/util/decorator.js
@@ -1339,7 +1339,6 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
      * Vector Constructor / Factory
      * @param {Number|Physics.vector} x (optional) Either the x coord. Or a vector to copy.
      * @param {Number} y (optional) The y coord.
-     * @param {Number} z (optional) The z coord.
      */
     var Vector = function Vector(x, y) {
 
@@ -1376,45 +1375,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
     /**
      * Methods
      */
-	 
-    /**
-     * Locks the axes of this vector
-     */
-	var vFns = ['set', 'add', 'vadd', 'sub', 'vsub', 'mult', 'perp', 'clone', 'zero', 'negate', 'clamp'];
-	Vector.prototype.lock = function(lock) {
-		var self = this,
-			origClamp = this.clamp,
-			origX = this.get(0),
-			origY = this.get(1),
-			lockX = lock.hasOwnProperty('x'),
-			lockY = lock.hasOwnProperty('y'),
-			xMin = lockX ? origX - lock.x / 2 : -Infinity,
-			xMax = lockX ? origX + lock.x / 2 : Infinity,
-			yMin = lockY ? origY - lock.y / 2 : -Infinity,
-			yMax = lockY ? origY + lock.y / 2 : Infinity,
-			min = Physics.vector(xMin, yMin),
-			max = Physics.vector(xMax, yMax);
-			
-		
-		vFns.forEach(function(fn) {
-			var orig = self[fn];
-			self[fn] = function() {
-				try {
-					return orig.apply(this, arguments);
-				} finally {
-					origClamp.call(this, min, max);
-				};
-			};
-		})
-	};
-	
-	Vector.prototype.unlock = function() {
-		var self = this;
-		vFns.forEach(function(fn) {
-			self[fn] = Vector.prototype[fn];
-		});
-	};
-	
+
     /**
      * Sets the components of this Vector.
      */
@@ -1469,7 +1430,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
         this.recalc = true;
 
         this._[0] += x;
-        this._[1] += typeof y == 'undefined' ? x : y;
+        this._[1] += y === undefined? x : y;
         return this;
     };
 
@@ -1481,7 +1442,7 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
         this.recalc = true;
 
         this._[0] -= x;
-        this._[1] -= typeof y == 'undefined' ? x : y;
+        this._[1] -= y === undefined? x : y;
         return this;
     };
 
@@ -1915,6 +1876,46 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
         this.recalc = true;
         return this;
     };
+	
+    /**
+     * HACK - Locks the axes of this vector to ranges
+	 * @param {Object} Ex: { x: 10 } will lock the x axis of this vector to a range of size 10 around the current x value
+     */
+	var vFns = ['set', 'add', 'vadd', 'sub', 'vsub', 'mult', 'perp', 'clone', 'zero', 'negate', 'clamp'];
+	Vector.prototype.lock = function(lock) {
+		var self = this,
+			origX = this.get(0),
+			origY = this.get(1),
+			lockX = lock.hasOwnProperty('x'),
+			lockY = lock.hasOwnProperty('y'),
+			xMin = lockX ? origX - lock.x / 2 : -Infinity,
+			xMax = lockX ? origX + lock.x / 2 : Infinity,
+			yMin = lockY ? origY - lock.y / 2 : -Infinity,
+			yMax = lockY ? origY + lock.y / 2 : Infinity;			
+		
+		vFns.forEach(function(fn) {
+			var orig = self[fn];
+			self[fn] = function() {
+				try {
+					return orig.apply(this, arguments);
+				} finally {
+					this._[0] = max(min(this._[0], xMax), xMin);
+					this._[1] = max(min(this._[1], yMax), yMin);
+					this.recalc = true;
+				};
+			};
+		});
+	};
+	
+    /**
+     * HACK - Unlocks the axes of this vector
+     */
+	Vector.prototype.unlock = function() {
+		var self = this;
+		vFns.forEach(function(fn) {
+			self[fn] = Vector.prototype[fn];
+		});
+	};
 
     /**
      * Render string
@@ -1933,7 +1934,8 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
     Vector.prototype.equals = function(v){
 
         return this._[0] === v._[0] &&
-            this._[1] === v._[1];
+            this._[1] === v._[1] &&
+            this._[2] === v._[2];
     };
 
 
@@ -2055,7 +2057,8 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
 // ---
 // inside: src/core/body.js
 
-(function(){	
+(function(){
+
     var defaults = {
 
         // is the body fixed and imovable?
@@ -2104,6 +2107,17 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
                     acc: 0.0
                 },
                 old: {
+                    pos: vector(),
+                    vel: vector(),
+                    acc: vector(),
+                    angular: {
+                        pos: 0.0,
+                        vel: 0.0,
+                        acc: 0.0
+                    }
+                },
+				// last rendered - we may not want to render as precisely as we calculate
+				rendered: {
                     pos: vector(),
                     vel: vector(),
                     acc: vector(),
@@ -2196,6 +2210,19 @@ var Decorator = Physics.util.decorator = function Decorator( type, baseProto ){
          */
         recalc: function(){
             // override to recalculate properties
+        },
+		
+        /**
+         * Get / set boolean that says whether this body has ever been rendered before
+         * @param val {Boolean} if true, marks this body as rendered, if false, marks this body as not rendered, if undefined, doesn't change rendered status
+         * @return {this}
+         */
+		rendered: function(val) {
+            if ( val !== undefined ){
+                this._rendered = val;
+            }
+
+            return !!this._rendered;
         }
     });
 
@@ -2423,7 +2450,7 @@ Physics.geometry.isPointInPolygon = function( pt, hull ){
     }
 
     scratch.done();
-    return ( Math.abs(ang) > 0 );
+    return ( Math.abs(ang) > 1e-6 );
 };
 
 /**
@@ -2703,7 +2730,7 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                 topic: 'beforeRender',
                 renderer: this,
                 bodies: bodies,
-                stats: meta
+                meta: meta
             });
 
             if (this.options.meta){
@@ -2713,11 +2740,10 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
             for ( var i = 0, l = bodies.length; i < l; ++i ){
                 
                 body = bodies[ i ];
-                view = body.view || ( body.view = this.createView(body.geometry) );
-
-                if ( !body.hidden ){
-                    this.drawBody( body, view );
-                }
+				if (!body.hidden) {
+					view = body.view || ( body.view = this.createView(body.geometry) );
+					this.drawBody( body, view );
+				}
             }
 
             return this;
@@ -2827,7 +2853,12 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
         webworker: false, // NOT YET IMPLEMENTED
 
         // default integrator
-        integrator: 'verlet'
+        integrator: 'verlet',
+		
+		// render position resolution - if the new position is less than this far away from the previously rendered one, don't re-render
+		positionRenderResolution: 0.1,
+		// render angle resolution - if the new angle is less than this far away from the previously rendered one, don't re-render
+		angleRenderResolution: 0.001
     };
 
     // begin world definitions
@@ -2925,7 +2956,6 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
             var i = 0
                 ,len = arg && arg.length || 0
                 ,thing = len ? arg[ 0 ] : arg
-                ,notify
                 ;
 
             if ( !thing ){
@@ -2958,15 +2988,6 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                     // end default
                 }
 
-                // notify
-                notify = {
-                    topic: 'add:' + thing.type
-                };
-
-                notify[ thing.type ] = thing;
-
-                this.publish( notify );
-
             } while ( ++i < len && (thing = arg[ i ]) );
 
             return this;
@@ -2982,7 +3003,6 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
             var i = 0
                 ,len = arg && arg.length || 0
                 ,thing = len ? arg[ 0 ] : arg
-                ,notify
                 ;
 
             if ( !thing ){
@@ -2995,7 +3015,7 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                 switch (thing.type){
 
                     case 'behavior':
-                        this.removeBehavior(thing);
+                        this.removeBehavior( thing );
                     break; // end behavior
 
                     case 'integrator':
@@ -3011,22 +3031,13 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                     break; // end renderer
 
                     case 'body':
-                        this.removeBody(thing);
+                        this.removeBody( thing );
                     break; // end body
                     
                     default:
                         throw 'Error: failed to remove item of unknown type "'+ thing.type +'" from world';
                     // end default
                 }
-
-                // notify
-                notify = {
-                    topic: 'add:' + thing.type
-                };
-
-                notify[ thing.type ] = thing;
-
-                this.publish( notify );
 
             } while ( ++i < len && (thing = arg[ i ]) );
 
@@ -3040,18 +3051,41 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         integrator: function( integrator ){
 
+            var notify;
+
             if ( integrator === undefined ){
                 return this._integrator;
+            }
+
+            // do nothing if already added
+            if ( this._integrator === integrator ){
+                return this;
             }
 
             if ( this._integrator ){
 
                 this._integrator.setWorld( null );
+
+                // notify
+                notify = {
+                    topic: 'remove:integrator',
+                    integrator: this._integrator
+                };
+
+                this.publish( notify );
             }
 
             if ( integrator ){
                 this._integrator = integrator;
                 this._integrator.setWorld( this );
+
+                // notify
+                notify = {
+                    topic: 'add:integrator',
+                    integrator: this._integrator
+                };
+
+                this.publish( notify );
             }
 
             return this;
@@ -3064,18 +3098,41 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         renderer: function( renderer ){
 
-            if (renderer === undefined){
+            var notify;
+
+            if ( renderer === undefined ){
                 return this._renderer;
+            }
+
+            // do nothing if renderer already added
+            if ( this._renderer === renderer ){
+                return this;
             }
 
             if ( this._renderer ){
 
                 this._renderer.setWorld( null );
+
+                // notify
+                notify = {
+                    topic: 'remove:renderer',
+                    renderer: this._renderer
+                };
+
+                this.publish( notify );
             }
 
-            if (renderer){
+            if ( renderer ){
                 this._renderer = renderer;
                 this._renderer.setWorld( this );
+
+                // notify
+                notify = {
+                    topic: 'add:renderer',
+                    renderer: this._renderer
+                };
+
+                this.publish( notify );
             }
 
             return this;
@@ -3107,8 +3164,19 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         addBehavior: function( behavior ){
 
+            var notify;
+
             behavior.setWorld( this );
             this._behaviors.push( behavior );
+
+            // notify
+            notify = {
+                topic: 'add:behavior',
+                behavior: behavior
+            };
+
+            this.publish( notify );
+
             return this;
         },
 
@@ -3140,18 +3208,18 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                     if (behavior === behaviors[ i ]){
                         
                         behaviors.splice( i, 1 );
+
+                        // notify
+                        notify = {
+                            topic: 'remove:behavior',
+                            behavior: behavior
+                        };
+
+                        this.publish( notify );
+
                         break;
                     }
                 }
-
-                // notify
-                notify = {
-                    topic: 'remove:behavior'
-                };
-
-                notify.behavior = behavior;
-
-                this.publish( notify );
             }
 
             return this;
@@ -3164,8 +3232,19 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         addBody: function( body ){
 
+            var notify;
+
             body.setWorld( this );
             this._bodies.push( body );
+
+            // notify
+            notify = {
+                topic: 'add:body',
+                body: body
+            };
+
+            this.publish( notify );
+
             return this;
         },
 
@@ -3197,18 +3276,18 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
                     if (body === bodies[ i ]){
                         
                         bodies.splice( i, 1 );
+
+                        // notify
+                        notify = {
+                            topic: 'remove:body',
+                            body: body
+                        };
+
+                        this.publish( notify );
+
                         break;
                     }
                 }
-
-                // notify
-                notify = {
-                    topic: 'remove:body'
-                };
-
-                notify.body = body;
-
-                this.publish( notify );
             }
 
             return this;
@@ -3281,12 +3360,6 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
          */
         step: function( now ){
             
-			// var i = this._bodies.length;
-			// while (i--) {
-				// var body = this._bodies[i];
-				// console.log("body", body.options.name,  "at: ", body.state.pos.get(0) + ', ' + body.state.pos.get(1));
-			// }
-			
             if ( this._paused ){
 
                 this._time = false;
@@ -3389,6 +3462,10 @@ Physics.geometry.nearestPointOnLine = function nearestPointOnLine( pt, linePt1, 
 
             var self = this;
             self.pause();
+
+            // notify before
+            this.publish( 'destroy' );
+
             // remove all listeners
             self.unsubscribe( true );
             // remove everything
@@ -3413,7 +3490,6 @@ Physics.integrator('verlet', function( parent ){
     // so let's add a mixin to bodies
 
     Physics.body.mixin({
-
         started: function( val ){
             if ( val !== undefined ){
                 this._started = true;
@@ -3449,7 +3525,6 @@ Physics.integrator('verlet', function( parent ){
             var dtdt = dt * dt
                 ,drag = 1 - this.options.drag
                 ,body = null
-				//,lock = null
                 ,state
                 ;
 
@@ -3491,11 +3566,6 @@ Physics.integrator('verlet', function( parent ){
                     // v += a * dt * dt
                     state.vel.vadd( state.acc.mult( dtdt ) );
 
-					// Get velocity projection onto non-locked axes
-					// if (lock = body.options.lock) {
-						// state.vel.set(lock.x ? 0 : state.vel.get(0), lock.y ? 0 : state.vel.get(1), lock.z ? 0 : state.vel.get(1));
-					// }
-					
                     // normalize velocity 
                     state.vel.mult( 1/dt );
 
@@ -3913,6 +3983,7 @@ Physics.geometry('convex-polygon', function( parent ){
         }
     };
 });
+
 
 // ---
 // inside: src/bodies/circle.js
@@ -4639,6 +4710,87 @@ Physics.behavior('constant-acceleration', function( parent ){
 });
 
 // ---
+// inside: src/behaviors/distance-proportional-force.js
+
+/**
+ * Attraction between bodies inversely proportional to the nth power of the distance between them (defaults to n=2, which is newtonian attraction)
+ * @module behaviors/distance-proportional-force
+ */
+Physics.behavior('distance-proportional-force', function( parent ){
+
+    var defaults = {
+
+        strength: 1,
+		n: 2, // the strength of the force is proportional to distance^n
+    };
+
+    return {
+
+        /**
+         * Initialization
+         * @param  {Object} options Configuration object
+         * @return {void}
+         */
+        init: function( options ){
+
+            // call parent init method
+            parent.init.call(this, options);
+
+            options = Physics.util.extend({}, defaults, options);
+
+            this.n = options.n;
+            this.strength = options.strength;
+            this.tolerance = options.tolerance || 100 * this.strength;
+        },
+        
+        /**
+         * Apply newtonian acceleration between all bodies
+         * @param  {Object} data Event data
+         * @return {void}
+         */
+        behave: function( data ){
+
+            var bodies = data.bodies
+                ,body
+                ,other
+				,n = this.n
+                ,strength = this.strength
+                ,tolerance = this.tolerance
+                ,scratch = Physics.scratchpad()
+                ,pos = scratch.vector()
+                ,normPowN
+                ,g
+                ;
+
+            for ( var j = 0, l = bodies.length; j < l; j++ ){
+                
+                body = bodies[ j ];
+
+                for ( var i = j + 1; i < l; i++ ){
+                    
+                    other = bodies[ i ];
+                    // clone the position
+                    pos.clone( other.state.pos );
+                    pos.vsub( body.state.pos );
+                    // get the square distance
+                    normPowN = Math.pow(pos.norm(), n);
+
+                    if (normPowN > tolerance){
+
+                        g = strength / normPowN;
+
+                        body.accelerate( pos.normalize().mult( g * other.mass ) );
+                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
+                    }
+                }
+            }
+
+            scratch.done();
+        }
+    };
+});
+
+// ---
 // inside: src/behaviors/edge-collision-detection.js
 
 /**
@@ -4904,164 +5056,142 @@ Physics.behavior('edge-collision-detection', function( parent ){
 });
 
 // ---
-// inside: src/behaviors/newtonian.js
+// inside: src/behaviors/follow-touch.js
 
 /**
- * Newtonian attraction between bodies (inverse square law)
- * @module behaviors/newtonian
+ * Follow touch
+ * Allows bodies to follow the motions of the dragged mouse
+ * @module behaviors/follow-touch
  */
-Physics.behavior('newtonian', function( parent ){
 
-    var defaults = {
+Physics.behavior('follow-touch', function(parent) {
+	return {
+		addTouchFollower: function(body) {
+			this._bodies.push(body);
+		},
+		
+		removeTouchFollower: function(body) {
+			this._bodies.splice(this._bodies.indexOf(body), 1);
+		},
+		
+		init: function( options ){
+			var self = this;
+			var constrainer;
 
-        strength: 1
-    };
+			this.touchPos = Physics.vector();
+			this.touchPosOld = Physics.vector();
+			this.tmp = Physics.vector();
+			this.dragged = Physics.vector();
+			this.offset = Physics.vector();
+			
+			this.dragging = false;
+			this._bodies = [];
+			if (options.bodies)
+				this._bodies.push.apply(this._bodies(options.bodies));
+				
+			if (options.body)
+				this._bodies.push(options.body);
+			
+			this._ondrag = this._ondrag.bind(this);
+			this._ondragend = this._ondragend.bind(this);
+			this._onswipe = this._onswipe.bind(this);
+			this._onremoveBody = this._onremoveBody.bind(this);
+		},
+		
+		_onremoveBody: function(data) {
+			if (~this._bodies.indexOf(data.body)) {
+				this.removeTouchFollower(data.body);
+			}
+		},
 
-    return {
+		_ondrag: function(e) {
+			var gesture = e.gesture,
+				center = gesture.center,
+				touch = e.gesture.touches[0];
+				
+			if (this.dragging) {
+				this.touchPosOld.clone(this.touchPos);
+				this.touchPos.set(touch.pageX, touch.pageY);
+			}
+			else {
+				this.dragging = true;
+				this.touchPos.set(touch.pageX, touch.pageY);
+				this.tmp.clone(this.touchPos);
+				this.tmp.sub(gesture.deltaY / 2, gesture.deltaY / 2);
+				this.touchPosOld.clone(this.tmp);
+			}
+			
+			this.tmp.clone(this.touchPos);
+			this.tmp.vsub(this.touchPosOld);
+			this.dragged.vadd(this.tmp.mult( 1 / 2 ));
+		},
 
-        /**
-         * Initialization
-         * @param  {Object} options Configuration object
-         * @return {void}
-         */
-        init: function( options ){
+		_ondragend: function(e) {
+			this.dragging = false;
+		},
 
-            // call parent init method
-            parent.init.call(this, options);
+		_onswipe: function(e) {
+			this.dragging = false;
+		},
+		
+		connect: function( world ){				
+			// subscribe the .behave() method to the position integration step
+			world._hammer.on('drag', this._ondrag);
+			world._hammer.on('dragend', this._ondragend);
+			world._hammer.on('swipe', this._onswipe);
+			world.subscribe('integrate:positions', this.behave, this);
+			world.subscribe('remove:body', this._onremoveBody);
+		},
 
-            options = Physics.util.extend({}, defaults, options);
+		disconnect: function( world ){
+			// unsubscribe when disconnected
+			world._hammer.off('drag', this._ondrag);
+			world._hammer.off('dragend', this._ondragend);
+			world._hammer.off('swipe', this._onswipe);
+			world.unsubscribe('integrate:positions', this.behave);
+			world.unsubscribe('remove:body', this._onremoveBody);
+		},
 
-            this.strength = options.strength;
-            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
-        },
-        
-        /**
-         * Apply newtonian acceleration between all bodies
-         * @param  {Object} data Event data
-         * @return {void}
-         */
-        behave: function( data ){
-
-            var bodies = data.bodies
-                ,body
-                ,other
-                ,strength = this.strength
-                ,tolerance = this.tolerance
-                ,scratch = Physics.scratchpad()
-                ,pos = scratch.vector()
-                ,normsq
-                ,g
-                ;
-
-            for ( var j = 0, l = bodies.length; j < l; j++ ){
-                
-                body = bodies[ j ];
-
-                for ( var i = j + 1; i < l; i++ ){
-                    
-                    other = bodies[ i ];
-                    // clone the position
-                    pos.clone( other.state.pos );
-                    pos.vsub( body.state.pos );
-                    // get the square distance
-                    normsq = pos.normSq();
-
-                    if (normsq > tolerance){
-
-                        g = strength / normsq;
-
-                        body.accelerate( pos.normalize().mult( g * other.mass ) );
-                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
-                    }
-                }
-            }
-
-            scratch.done();
-        }
-    };
+		behave: function( data ){
+			if (!this.dragging || !this._bodies.length || this.dragged.equals(Physics.vector.zero))
+				return;
+				
+			var i = this._bodies.length,
+				body,
+				pos,
+				lock,
+				dragged = this.dragged,
+				draggedX = dragged.get(0),
+				draggedY = dragged.get(1);
+				
+			while (i--) {
+				body = this._bodies[i];
+				if (body.options.fixed)
+					continue;
+					
+				pos = body.state.pos;
+				lock = body.options.lock;
+				if (lock)
+					pos.add(lock.x ? 0 : draggedX, lock.y ? 0 : draggedY);
+				else
+					pos.vadd(dragged);
+				
+				body.state.vel.clone( dragged.mult( 1 / 10 ) );
+				// body.state.vel.clamp( { x: -1, y: -1 }, { x: 1, y: 1 } );
+			}
+			
+			this.dragged.zero();
+		}
+	};
 });
 
-/**
- * Newtonian attraction between bodies (inverse square law)
- * @module behaviors/newtonian
- */
-Physics.behavior('distance-based-force', function( parent ){
 
-    var defaults = {
-
-        strength: 1,
-		n: 2, // the strength of the force is proportional to distance^n
-    };
-
-    return {
-
-        /**
-         * Initialization
-         * @param  {Object} options Configuration object
-         * @return {void}
-         */
-        init: function( options ){
-
-            // call parent init method
-            parent.init.call(this, options);
-
-            options = Physics.util.extend({}, defaults, options);
-
-            this.n = options.n;
-            this.strength = options.strength;
-            this.tolerance = options.tolerance || 100 * this.strength;
-        },
-        
-        /**
-         * Apply newtonian acceleration between all bodies
-         * @param  {Object} data Event data
-         * @return {void}
-         */
-        behave: function( data ){
-
-            var bodies = data.bodies
-                ,body
-                ,other
-				,n = this.n
-                ,strength = this.strength
-                ,tolerance = this.tolerance
-                ,scratch = Physics.scratchpad()
-                ,pos = scratch.vector()
-                ,normPowN
-                ,g
-                ;
-
-            for ( var j = 0, l = bodies.length; j < l; j++ ){
-                
-                body = bodies[ j ];
-
-                for ( var i = j + 1; i < l; i++ ){
-                    
-                    other = bodies[ i ];
-                    // clone the position
-                    pos.clone( other.state.pos );
-                    pos.vsub( body.state.pos );
-                    // get the square distance
-                    normPowN = Math.pow(pos.norm(), n);
-
-                    if (normPowN > tolerance){
-
-                        g = strength / normPowN;
-
-                        body.accelerate( pos.normalize().mult( g * other.mass ) );
-                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
-                    }
-                }
-            }
-
-            scratch.done();
-        }
-    };
-});
+// ---
+// inside: src/behaviors/gravity-well.js
 
 /**
- * Newtonian attraction between bodies (inverse square law)
- * @module behaviors/newtonian
+ * Newtonian attraction between bodies and a point in the world (inverse square law)
+ * @module behaviors/gravity-well
  */
 Physics.behavior('gravity-well', function( parent ){
 
@@ -5133,15 +5263,19 @@ Physics.behavior('gravity-well', function( parent ){
     };
 });
 
+
+// ---
+// inside: src/behaviors/newtonian.js
+
 /**
  * Newtonian attraction between bodies (inverse square law)
  * @module behaviors/newtonian
  */
-Physics.behavior('surface-attraction', function( parent ){
+Physics.behavior('newtonian', function( parent ){
 
     var defaults = {
-        strength: 1,
-		mass: 10
+
+        strength: 1
     };
 
     return {
@@ -5159,8 +5293,7 @@ Physics.behavior('surface-attraction', function( parent ){
             options = Physics.util.extend({}, defaults, options);
 
             this.strength = options.strength;
-            this.tolerance = options.tolerance || 100 * this.strength;
-			this.mass = options.mass;
+            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
         },
         
         /**
@@ -5172,69 +5305,36 @@ Physics.behavior('surface-attraction', function( parent ){
 
             var bodies = data.bodies
                 ,body
-				,bodyIsFixed
-				,other
-				,bodyPos
-				,mass = this.mass
+                ,other
                 ,strength = this.strength
                 ,tolerance = this.tolerance
                 ,scratch = Physics.scratchpad()
                 ,pos = scratch.vector()
-                ,v1 = scratch.vector()
-                ,v2 = scratch.vector()
-				,vertices
-				,numVertices
-				,i
-				,minDistance = Infinity
-				,distanceToLine
-				,pt
-				,nearestPt
                 ,normsq
                 ,g
                 ;
 
-            for ( var b = 0, l = bodies.length; b < l; b++ ) {
-                body = bodies[ b ]; // the body to be accelerated
-				if (body.options.fixed)
-					continue;
-					
-				bodyPos = body.state.pos;
-                for ( var c = 0; c < l; c++ ) {
-					if (c == b)
-						continue;
-						
-                    other = bodies[ c ];
-					vertices = other.geometry.vertices;
-					if (!vertices)
-						nearestPt = other.state.pos;
-					else {
-						i = numVertices = vertices.length;
-						while (i--) {
-							v1.clone(vertices[i]);
-							v1.vadd(other.state.pos);
-							v2.clone(vertices[(i + 1) % numVertices]);
-							v2.vadd(other.state.pos);
-							pt = Physics.geometry.nearestPointOnLine(bodyPos, v1, v2);
-							distanceToLine = pt.dist(bodyPos);
-							if (distanceToLine < minDistance) {
-								minDistance = distanceToLine;
-								nearestPt = pt;
-							}
-						}
-					}
-					
-					// clone the position
-					pos.clone( nearestPt );
-					pos.vsub( bodyPos );
-					// get the square distance
-					normsq = pos.normSq();
+            for ( var j = 0, l = bodies.length; j < l; j++ ){
+                
+                body = bodies[ j ];
 
-					if (normsq > tolerance){
+                for ( var i = j + 1; i < l; i++ ){
+                    
+                    other = bodies[ i ];
+                    // clone the position
+                    pos.clone( other.state.pos );
+                    pos.vsub( body.state.pos );
+                    // get the square distance
+                    normsq = pos.normSq();
 
-						g = strength / normsq;
-						body.accelerate( pos.normalize().mult( g * mass ) );
-					}					
-				}				
+                    if (normsq > tolerance){
+
+                        g = strength / normsq;
+
+                        body.accelerate( pos.normalize().mult( g * other.mass ) );
+                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
+                    }
+                }
             }
 
             scratch.done();
@@ -5428,6 +5528,120 @@ Physics.behavior('rigid-constraint-manager', function( parent ){
         }
     };
 });
+
+
+// ---
+// inside: src/behaviors/surface-attraction.js
+
+/**
+ * Newtonian attraction between bodies directed towards closest point on the other body's surface as opposed to the centroid
+ * @module behaviors/surface-attraction
+ */
+Physics.behavior('surface-attraction', function( parent ){
+
+    var defaults = {
+        strength: 1,
+		mass: 1
+    };
+
+    return {
+
+        /**
+         * Initialization
+         * @param  {Object} options Configuration object
+         * @return {void}
+         */
+        init: function( options ){
+
+            // call parent init method
+            parent.init.call(this, options);
+
+            options = Physics.util.extend({}, defaults, options);
+
+            this.strength = options.strength;
+            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
+			this.mass = options.mass;
+        },
+        
+        /**
+         * Apply newtonian acceleration between all bodies
+         * @param  {Object} data Event data
+         * @return {void}
+         */
+        behave: function( data ){
+
+            var bodies = data.bodies
+                ,body
+				,bodyIsFixed
+				,other
+				,bodyPos
+				,mass = this.mass
+                ,strength = this.strength
+                ,tolerance = this.tolerance
+                ,scratch = Physics.scratchpad()
+                ,pos = scratch.vector()
+                ,v1 = scratch.vector()
+                ,v2 = scratch.vector()
+				,vertices
+				,numVertices
+				,i
+				,minDistance = Infinity
+				,distanceToLine
+				,pt
+				,nearestPt
+                ,normsq
+                ,g
+                ;
+
+            for ( var b = 0, l = bodies.length; b < l; b++ ) {
+                body = bodies[ b ]; // the body to be accelerated
+				if (body.options.fixed)
+					continue;
+					
+				bodyPos = body.state.pos;
+                for ( var c = 0; c < l; c++ ) {
+					if (c == b)
+						continue;
+						
+                    other = bodies[ c ];
+					vertices = other.geometry.vertices;
+					if (!vertices)
+						nearestPt = other.state.pos;
+					else {
+						i = numVertices = vertices.length;
+						while (i--) {
+							v1.clone(vertices[i]);
+							v1.vadd(other.state.pos);
+							v2.clone(vertices[(i + 1) % numVertices]);
+							v2.vadd(other.state.pos);
+							pt = Physics.geometry.nearestPointOnLine(bodyPos, v1, v2);
+							distanceToLine = pt.dist(bodyPos);
+							if (distanceToLine < minDistance) {
+								minDistance = distanceToLine;
+								nearestPt = pt;
+							}
+						}
+					}
+					
+					// clone the position
+					pos.clone( nearestPt );
+					pos.vsub( bodyPos );
+					// get the square distance
+					normsq = pos.normSq();
+
+					if (normsq > tolerance){
+
+						g = strength / normsq;
+						body.accelerate( pos.normalize().mult( g * mass ) );
+					}					
+				}				
+            }
+
+            scratch.done();
+        }
+    };
+});
+
 
 
 // ---
@@ -5950,7 +6164,6 @@ Physics.behavior('verlet-constraints', function( parent ){
             }
 
             world.subscribe('integrate:positions', this.resolve, this);
-			this._world = world;
         },
 
         /**
@@ -5961,8 +6174,6 @@ Physics.behavior('verlet-constraints', function( parent ){
         disconnect: function( world ){
 
             world.unsubscribe('integrate:positions', this.resolve);
-			if (this._world == world)
-				this._world = null;
         },
 
         /**
@@ -5986,11 +6197,9 @@ Physics.behavior('verlet-constraints', function( parent ){
          */
         distanceConstraint: function( bodyA, bodyB, stiffness, targetLength ){
 
-            var self = this,
-				cst;
+            var cst;
 
             if (!bodyA || !bodyB){
-
                 return false;
             }
 
@@ -6004,12 +6213,12 @@ Physics.behavior('verlet-constraints', function( parent ){
             };
 
             cst.targetLengthSq = cst.targetLength * cst.targetLength;
-			this._watchRemove(cst, bodyA, bodyB);
+			this._monitorRemove(cst, bodyA, bodyB);
             this._distanceConstraints.push( cst );
             return cst;
         },
 
-		_watchRemove: function(cst /* bodies */) {
+		_monitorRemove: function(cst /* bodies */) {
 			var self = this,
 				args = arguments,
 				l = args.length;
@@ -6023,7 +6232,7 @@ Physics.behavior('verlet-constraints', function( parent ){
 				}
 			});
 		},
-		
+
         /**
          * Constrain three bodies to a target relative angle
          * @param  {Object} bodyA        First body
@@ -6051,6 +6260,7 @@ Physics.behavior('verlet-constraints', function( parent ){
                 targetAngle: targetAngle || bodyB.state.pos.angle2( bodyA.state.pos, bodyC.state.pos )
             };
 
+			this._monitorRemove(cst, bodyA, bodyB, bodyC);
             this._angleConstraints.push( cst );
             return cst;
         },
@@ -6862,10 +7072,36 @@ Physics.renderer('dom', function( proto ){
     // determine which drawBody method we can use
     if (cssTransform){
         drawBody = function( body, view ){
-
-            var pos = body.state.pos;
-//            view.style[cssTransform] = 'translate('+pos.get(0)+'px,'+pos.get(1)+'px) rotate('+body.state.angular.pos+'rad)';
-            view.style[cssTransform] = 'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, ' +pos.get(0)+','+pos.get(1)+', 0, 1)';// rotateZ('+body.state.angular.pos+'rad)';
+            var state = body.state,
+				pos = state.pos,
+				angle = state.angular.pos,
+				rendered = state.rendered;
+				
+			if (!body.rendered() 
+				|| pos.dist(rendered.pos) > this._world._opts.positionRenderResolution 
+				|| Math.abs(angle - rendered.angular.pos) > this._world._opts.angleRenderResolution) {
+				
+				body.rendered(pos);
+				rendered.angular.pos = angle;
+				rendered.pos.clone(pos);
+				
+				// compute translation matrix * z rotation matrix
+				// TODO: adjust for 3d (x, y rotation matrices, z translation)
+				var cosC = Math.cos(angle),
+					sinC = Math.sin(angle),
+					sinNC = Math.sin(-angle),
+					transform = 'matrix3d(',
+					aabb = body.geometry._aabb,
+					x = pos.get(0) - (aabb._hw || 0),
+					y = pos.get(1) - (aabb._hh || 0);
+					
+				// 4 rows of the transform matrix
+				transform += cosC + ', ' + sinNC + ', 0, 0, ';
+				transform += sinC + ', ' + cosC + ', 0, 0, ';
+				transform += '0, 0, 1, 0, ';
+				transform += (x * cosC + y * sinC) + ', ' + (x * sinNC + y * cosC) + ', 0, 1)';
+				view.style[cssTransform] = transform;
+			}
         };
     } else {
         drawBody = function( body, view ){
@@ -6912,22 +7148,6 @@ Physics.renderer('dom', function( proto ){
             }
         },
 
-		/**
-         * Set dom element style properties for a convex-polygon
-         * @param  {HTMLElement} el       The element
-         * @param  {Geometry} geometry The body's geometry
-         * @return {void}
-         */
-        'convex-polygonProperties': function( el, geometry ){
-
-            var aabb = geometry.aabb();
-
-            el.style.width = (aabb.halfWidth * 2) + px;
-            el.style.height = (aabb.halfHeight * 2) + px;
-            el.style.marginLeft = (-aabb.halfWidth) + px;
-            el.style.marginTop = (-aabb.halfHeight) + px;
-        },
-
         /**
          * Set dom element style properties for a circle
          * @param  {HTMLElement} el       The element
@@ -6940,8 +7160,24 @@ Physics.renderer('dom', function( proto ){
 
             el.style.width = (aabb.halfWidth * 2) + px;
             el.style.height = (aabb.halfHeight * 2) + px;
-            el.style.marginLeft = (-aabb.halfWidth) + px;
-            el.style.marginTop = (-aabb.halfHeight) + px;
+            // el.style.marginLeft = (-aabb.halfWidth) + px;
+            // el.style.marginTop = (-aabb.halfHeight) + px;
+        },
+
+		/**
+         * Set dom element style properties for a convex-polygon
+         * @param  {HTMLElement} el       The element
+         * @param  {Geometry} geometry The body's geometry
+         * @return {void}
+         */
+        'convex-polygonProperties': function( el, geometry ){
+
+            var aabb = geometry.aabb();
+
+            el.style.width = (aabb.halfWidth * 2) + px;
+            el.style.height = (aabb.halfHeight * 2) + px;
+            // el.style.marginLeft = (-aabb.halfWidth) + px;
+            // el.style.marginTop = (-aabb.halfHeight) + px;
         },
 
         /**
@@ -6975,8 +7211,8 @@ Physics.renderer('dom', function( proto ){
          */
         drawMeta: function( meta ){
 
-            this.els.fps.innerHTML = meta.fps.toFixed(2);
-            this.els.ipf.innerHTML = meta.ipf;
+            this.els.fps.textContent = meta.fps.toFixed(2);
+            this.els.ipf.textContent = meta.ipf;
         },
 
         /**

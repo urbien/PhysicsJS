@@ -85,7 +85,7 @@ Physics.behavior('rigid-constraint-manager', function( parent ){
                 id: Physics.util.uniqueId('rigid-constraint'),
                 bodyA: bodyA,
                 bodyB: bodyB,
-                targetLength: targetLength || this.options.targetLength
+                targetLength: typeof targetLength == 'number' ? targetLength : this.options.targetLength
             });
 
             return cst;

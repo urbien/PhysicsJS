@@ -57,9 +57,36 @@ Physics.renderer('dom', function( proto ){
     // determine which drawBody method we can use
     if (cssTransform){
         drawBody = function( body, view ){
-
-            var pos = body.state.pos;
-            view.style[cssTransform] = 'translate('+pos.get(0)+'px,'+pos.get(1)+'px) rotate('+body.state.angular.pos+'rad)';
+            var state = body.state,
+				pos = state.pos,
+				angle = state.angular.pos,
+				rendered = state.rendered;
+				
+			if (!body.rendered() 
+				|| pos.dist(rendered.pos) > this._world._opts.positionRenderResolution 
+				|| Math.abs(angle - rendered.angular.pos) > this._world._opts.angleRenderResolution) {
+				
+				body.rendered(pos);
+				rendered.angular.pos = angle;
+				rendered.pos.clone(pos);
+				
+				// compute translation matrix * z rotation matrix
+				// TODO: adjust for 3d (x, y rotation matrices, z translation)
+				var cosC = Math.cos(angle),
+					sinC = Math.sin(angle),
+					sinNC = Math.sin(-angle),
+					transform = 'matrix3d(',
+					aabb = body.geometry._aabb,
+					x = pos.get(0) - aabb._hw,
+					y = pos.get(1) - aabb._hh;
+					
+				// 4 rows of the transform matrix
+				transform += cosC + ', ' + sinNC + ', 0, 0, ';
+				transform += sinC + ', ' + cosC + ', 0, 0, ';
+				transform += '0, 0, 1, 0, ';
+				transform += (x * cosC + y * sinC) + ', ' + (x * sinNC + y * cosC) + ', 0, 1)';
+				view.style[cssTransform] = transform;
+			}
         };
     } else {
         drawBody = function( body, view ){
@@ -118,8 +145,24 @@ Physics.renderer('dom', function( proto ){
 
             el.style.width = (aabb.halfWidth * 2) + px;
             el.style.height = (aabb.halfHeight * 2) + px;
-            el.style.marginLeft = (-aabb.halfWidth) + px;
-            el.style.marginTop = (-aabb.halfHeight) + px;
+            // el.style.marginLeft = (-aabb.halfWidth) + px;
+            // el.style.marginTop = (-aabb.halfHeight) + px;
+        },
+
+		/**
+         * Set dom element style properties for a convex-polygon
+         * @param  {HTMLElement} el       The element
+         * @param  {Geometry} geometry The body's geometry
+         * @return {void}
+         */
+        'convex-polygonProperties': function( el, geometry ){
+
+            var aabb = geometry.aabb();
+
+            el.style.width = (aabb.halfWidth * 2) + px;
+            el.style.height = (aabb.halfHeight * 2) + px;
+            // el.style.marginLeft = (-aabb.halfWidth) + px;
+            // el.style.marginTop = (-aabb.halfHeight) + px;
         },
 
         /**
@@ -153,8 +196,8 @@ Physics.renderer('dom', function( proto ){
          */
         drawMeta: function( meta ){
 
-            this.els.fps.innerHTML = meta.fps.toFixed(2);
-            this.els.ipf.innerHTML = meta.ipf;
+            this.els.fps.textContent = meta.fps.toFixed(2);
+            this.els.ipf.textContent = meta.ipf;
         },
 
         /**

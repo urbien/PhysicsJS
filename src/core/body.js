@@ -56,6 +56,17 @@
                         vel: 0.0,
                         acc: 0.0
                     }
+                },
+				// last rendered - we may not want to render as precisely as we calculate
+				rendered: {
+                    pos: vector(),
+                    vel: vector(),
+                    acc: vector(),
+                    angular: {
+                        pos: 0.0,
+                        vel: 0.0,
+                        acc: 0.0
+                    }
                 }
             };
 
@@ -140,6 +151,19 @@
          */
         recalc: function(){
             // override to recalculate properties
+        },
+		
+        /**
+         * Get / set boolean that says whether this body has ever been rendered before
+         * @param val {Boolean} if true, marks this body as rendered, if false, marks this body as not rendered, if undefined, doesn't change rendered status
+         * @return {this}
+         */
+		rendered: function(val) {
+            if ( val !== undefined ){
+                this._rendered = val;
+            }
+
+            return !!this._rendered;
         }
     });
 

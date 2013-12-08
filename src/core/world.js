@@ -51,7 +51,12 @@
         webworker: false, // NOT YET IMPLEMENTED
 
         // default integrator
-        integrator: 'verlet'
+        integrator: 'verlet',
+		
+		// render position resolution - if the new position is less than this far away from the previously rendered one, don't re-render
+		positionRenderResolution: 0.1,
+		// render angle resolution - if the new angle is less than this far away from the previously rendered one, don't re-render
+		angleRenderResolution: 0.001
     };
 
     // begin world definitions

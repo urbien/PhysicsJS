@@ -1,33 +1,40 @@
 define([
     
-    'jquery',
 	'masonry',
 	'hammer'
 
 ], function(
-    $,
 	Mason,
 	Hammer
 ) {
     var sim = function( world, Physics ){
 
-        var $win = $(window),
-			container = document.getElementById('viewport'),
-            viewWidth = $win.width(),
-            viewHeight = $win.height(),
+        var containerEl = document.getElementById('viewport'),
+			groupEl = containerEl.querySelector('.group'),
+			groupPt = Physics.body('point', { view: groupEl, mass: 10 }),
+            viewWidth = window.innerWidth,
+            viewHeight = window.innerWidth,
 			BATCH_SIZE = 10,
 			COL_WIDTH = 30,
 			INTER_BRICK_MARGIN = 10,
 			NUM_COLS = 5,
 			MASONRY_WIDTH = COL_WIDTH * NUM_COLS + INTER_BRICK_MARGIN * (NUM_COLS - 1),
-			LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
+			//LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
             bounds,
-			dogman = Physics.body('circle', {
+
+			// CONFIG
+			// anti-gravity and brick->brick close quarters repulsion (HINT: don't use these ever)
+			ADD_FORCES = false,
+			// move all bricks as a group - easy on the CPU as the world only tracks one body
+			DO_GROUP = true,
+			// END CONFIG
+			
+			dogman = Physics.body('point', {
 				mass: 1,
-				radius: 50
+				hidden: true
 			}),
 			hammerOptions = {},
-			hammer = new Hammer(container, hammerOptions),
+			hammer = new Hammer(containerEl, hammerOptions),
 			touchFollower,
 			/*
             edgeBounce = Physics.behavior('edge-collision-detection', {
@@ -35,27 +42,35 @@ define([
                 restitution: 0.3,
                 cof: 0.5
             }),*/
-			constrainer = Physics.behavior('verlet-constraints', { iterations: 2 }), // same as default iterations value, but it's good to remember what we can change
+			constrainer = Physics.behavior('verlet-constraints', { iterations: 1 }), // same as default iterations value, but it's good to remember what we can change
 			bodyCount = 0,
-			mason,
-			ADD_FORCES = false;
+			mason;
 			
 		function calcBounds() {
 			//return Physics.aabb(viewWidth / 2 - LEFT_WALL_OFFSET_FROM_CENTER | 0, 0, viewWidth / 2 + LEFT_WALL_OFFSET_FROM_CENTER | 0, viewHeight);
 			// return Physics.aabb(viewWidth / 2 | 0, 0, viewWidth / 2 + MASONRY_WIDTH, viewHeight);
 			bounds = Physics.aabb(0, 0, viewWidth / 2, viewHeight);
-			dogman.state.pos.set(bounds._pos.get(0), viewHeight * 10);
-			dogman.state.pos.lock({
-				x: 0
-			});
-			
-  		    dogman.state.vel.lock({
-			    x: 0
-			});
+			if (DO_GROUP) {
+				groupPt.state.pos.set(bounds._pos.get(0) - bounds._hw, bounds._pos.get(1) - bounds._hh); // 0, 0 of the viewport - all brick positions are relative this one
+				groupPt.state.pos.lock({
+					x: 0
+				});
+			}
+			else {
+				dogman.state.pos.set(bounds._pos.get(0), viewHeight * 10);
+				dogman.state.pos.lock({
+					x: 0
+				});
+/*				
+				dogman.state.vel.lock({
+					x: 0
+				});
 
-			dogman.state.acc.lock({
-			    x: 0
-			});
+				dogman.state.acc.lock({
+					x: 0
+				});
+*/
+			}
 			
 			return ;
 		}
@@ -66,8 +81,10 @@ define([
 			if (n) {
 				var bricks = fromTheHead ? mason.bricks.slice(0, n) : mason.bricks.slice(mason.bricks.length - n),
 					el;
+				
+				if (!DO_GROUP)
+					world.remove(bricks);
 					
-				world.remove(bricks);
 				world.subscribe('render', function removeElements() {
 					world.unsubscribe('render', removeElements);
 					while (n--) {
@@ -79,21 +96,49 @@ define([
 					mason.removed(bricks);
 				});	
 			}
+			
+			if (!DO_GROUP)
+				updateDogmanMass();
+		}
+		
+		function updateDogmanMass() {
+			dogman.mass = Math.pow(mason.bricks.length, 1/3) * mason.bricks.reduce(function(mass, brick) { return mass + brick.mass }, 0) / 2;
+			dogman.recalc();
 		}
 		
 		function addBricks(n, prepend) {
-			n = n || 1;
+			// n = n || 1;
+			n = 10;
 			var bricks = new Array(n);
 			for (var i = 0; i < n; i++) {
 				bricks[i] = addBrick(randomWidth(), randomHeight());
 			}
 			
 			mason[prepend ? 'prepended' : 'appended'](bricks);
+			if (!DO_GROUP) {
+				var brick,
+					i = bricks.length;
+					
+				while (i--) {
+					brick = bricks[i];
+					constrainer.distanceConstraint(brick, dogman, 0.02, brick.state.pos.dist(dogman.state.pos));
+				}
+
+				updateDogmanMass();
+			}
 		}
 			
 		function addBrick(width, height) {
+			var el = document.createElement('div');
+			el.setAttribute('class', 'pjs-convex-polygon');
+			el.style.position = 'absolute';
+			el.style.width = width + 'px';
+			el.style.height = height + 'px';
+			groupEl.appendChild(el);
+			
 			var body = Physics.body('convex-polygon', {
 				name: 'blah' + bodyCount++,
+				fixed: DO_GROUP,
 				mass: 0.1,
 				vertices: [
 					{x: 0, y: height},
@@ -101,10 +146,11 @@ define([
 					{x: width, y: 0},
 					{x: 0, y: 0}
 				],
+				view: el,
 				restitution: 0.9
 			});
 			
-			world.add( body );
+			world.add( body );	
 			return body;
 		};
 				
@@ -135,11 +181,17 @@ define([
 		function init() {
 			calcBounds();
 			mason = new Mason({
-				dogman: dogman,
-				constrainer: constrainer,
+				dogman: DO_GROUP ? null : dogman,
+				constrainer: DO_GROUP ? null : constrainer,
 				gutterWidth: INTER_BRICK_MARGIN,
 				bounds: bounds
 			});
+			
+			// setInterval(function() {
+				// dogman.mass++;
+				// dogman.recalc();
+				// dogman.mass = mason.bricks.reduce(function(mass, brick) { return mass + brick.mass }, 0);
+			// }, 1000);
 		};
 
         // $(window).on('resize', function(){
@@ -158,27 +210,34 @@ define([
         world.add( constrainer ); 
         // world.add( edgeBounce );
 		
-		world.subscribe('masonry:append', function() {
+		world.subscribe('masonry:append', function(data) {
 			addBricks(Math.random() * BATCH_SIZE | 0, false);
 		});
 
-		world.subscribe('masonry:prepend', function() {
+		world.subscribe('masonry:prepend', function(data) {
 			addBricks(Math.random() * BATCH_SIZE | 0, true);
 		});
 
-		world.subscribe('masonry:trim-tail', function() {
+		world.subscribe('masonry:trim-tail', function(data) {
 			removeBricks(Math.random() * BATCH_SIZE | 0, false);
 		});
 		
-		world.subscribe('masonry:trim-head', function() {
+		world.subscribe('masonry:trim-head', function(data) {
 			removeBricks(Math.random() * BATCH_SIZE | 0, true);
 		});
 		
 		world._hammer = hammer;
 		touchFollower = Physics.behavior('follow-touch');
+		if (DO_GROUP) {
+			touchFollower.addTouchFollower(groupPt);
+			world.add(groupPt);
+		}
+		else {
+			touchFollower.addTouchFollower(dogman);
+			world.add(dogman);
+		}
+		
 		world.add(touchFollower);
-		touchFollower.addTouchFollower(dogman);
-		world.add(dogman);
 		
 		if (ADD_FORCES) {
 			// add close-distance repulsion

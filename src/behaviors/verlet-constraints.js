@@ -81,7 +81,6 @@ Physics.behavior('verlet-constraints', function( parent ){
             var cst;
 
             if (!bodyA || !bodyB){
-
                 return false;
             }
 
@@ -91,14 +90,29 @@ Physics.behavior('verlet-constraints', function( parent ){
                 bodyA: bodyA,
                 bodyB: bodyB,
                 stiffness: stiffness || 0.5,
-                targetLength: targetLength || bodyB.state.pos.dist( bodyA.state.pos )
+                targetLength: typeof targetLength == 'number' ? targetLength : bodyB.state.pos.dist( bodyA.state.pos )
             };
 
             cst.targetLengthSq = cst.targetLength * cst.targetLength;
-
+			this._monitorRemove(cst, bodyA, bodyB);
             this._distanceConstraints.push( cst );
             return cst;
         },
+
+		_monitorRemove: function(cst /* bodies */) {
+			var self = this,
+				args = arguments,
+				l = args.length;
+				
+			this._world.subscribe('remove:body', function removeConstraint(data) {
+				for (var i = 1; i < l; i++) {
+					if (data.body == args[i]) {
+						self._world.unsubscribe('remove:body', removeConstraint);
+						self.remove(cst);
+					}
+				}
+			});
+		},
 
         /**
          * Constrain three bodies to a target relative angle
@@ -127,6 +141,7 @@ Physics.behavior('verlet-constraints', function( parent ){
                 targetAngle: targetAngle || bodyB.state.pos.angle2( bodyA.state.pos, bodyC.state.pos )
             };
 
+			this._monitorRemove(cst, bodyA, bodyB, bodyC);
             this._angleConstraints.push( cst );
             return cst;
         },

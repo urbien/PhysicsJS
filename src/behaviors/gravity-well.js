@@ -1,12 +1,15 @@
 /**
- * Newtonian attraction between bodies (inverse square law)
- * @module behaviors/newtonian
+ * Newtonian attraction between bodies and a point in the world (inverse square law)
+ * @module behaviors/gravity-well
  */
-Physics.behavior('newtonian', function( parent ){
+Physics.behavior('gravity-well', function( parent ){
 
     var defaults = {
 
-        strength: 1
+        strength: 1,
+		mass: 1,
+		x: 0,
+		y: 0
     };
 
     return {
@@ -25,6 +28,8 @@ Physics.behavior('newtonian', function( parent ){
 
             this.strength = options.strength;
             this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
+			this.pos = Physics.vector(options.x, options.y);
+			this.mass = options.mass;
         },
         
         /**
@@ -36,7 +41,7 @@ Physics.behavior('newtonian', function( parent ){
 
             var bodies = data.bodies
                 ,body
-                ,other
+				,mass = this.mass
                 ,strength = this.strength
                 ,tolerance = this.tolerance
                 ,scratch = Physics.scratchpad()
@@ -45,27 +50,21 @@ Physics.behavior('newtonian', function( parent ){
                 ,g
                 ;
 
-            for ( var j = 0, l = bodies.length; j < l; j++ ){
+            for ( var i = 0, l = bodies.length; i < l; i++ ){
                 
-                body = bodies[ j ];
+                body = bodies[ i ];
+				// clone the position
+				pos.clone( this.pos );
+				pos.vsub( body.state.pos );
+				// get the square distance
+				normsq = pos.normSq();
 
-                for ( var i = j + 1; i < l; i++ ){
-                    
-                    other = bodies[ i ];
-                    // clone the position
-                    pos.clone( other.state.pos );
-                    pos.vsub( body.state.pos );
-                    // get the square distance
-                    normsq = pos.normSq();
+				if (normsq > tolerance){
 
-                    if (normsq > tolerance){
+					g = strength / normsq;
 
-                        g = strength / normsq;
-
-                        body.accelerate( pos.normalize().mult( g * other.mass ) );
-                        other.accelerate( pos.mult( body.mass/other.mass ).negate() );
-                    }
-                }
+					body.accelerate( pos.normalize().mult( g * mass ) );
+				}
             }
 
             scratch.done();

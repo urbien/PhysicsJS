@@ -1,4 +1,6 @@
 /**
+ * Adapted for PhysicsJS
+ * 
  * jQuery Masonry v2.0.110517 beta
  * The flip-side of CSS Floats.
  * jQuery plugin that rearranges item elements to a grid.
@@ -8,7 +10,7 @@
  * Copyright 2011 David DeSandro
  */
 
-define('masonry', ['physicsjs'], function( Physics ) {
+define('masonry', ['physicsjs'], function(Physics) {
   // ========================= Masonry ===============================
 
   var ArrayProto = Array.prototype;
@@ -34,8 +36,7 @@ define('masonry', ['physicsjs'], function( Physics ) {
   // our "Widget" object constructor
   function Mason( options, bricks ){
 	this.dogman = options.dogman;
-	this.initialYOffset = this.dogman.state.pos.get(1);
-	this.trainer = options.constrainer;
+	this.initialYOffset = this.dogman ? this.dogman.state.pos.get(1) : 0;
     this.bricks = bricks || [];
     this._create( options );
 	if (this.bricks.length)
@@ -78,7 +79,7 @@ define('masonry', ['physicsjs'], function( Physics ) {
     // sets up widget
     _create: function( options ) {
   
-      this.options = $.extend( true, {}, Mason.settings, options );
+      this.options = Physics.util.extend( {}, Mason.settings, options );
       this.axis = this.options.horizontal ? 'x' : 'y';
 //      this.AXIS = this.axis.toUpperCase();
       this.originalFromBottom = this.options.fromBottom;
@@ -114,6 +115,13 @@ define('masonry', ['physicsjs'], function( Physics ) {
         max: Math.min.apply(Math, this.bottomColYs)
       }
     },
+	
+	_getOffsetDueToDogman: function() {
+		if (this.dogman)
+			return this.dogman.state.pos.get(1) - this.initialYOffset;
+		else
+			return 0;
+	},
   
     option: function( key, value ){
   
@@ -302,15 +310,15 @@ define('masonry', ['physicsjs'], function( Physics ) {
         left = this.columnWidth * shortCol + this.offset.x + brick.geometry._aabb._hw; // columnWidth includes gutterWidth
       
         if (this.options.fromBottom)
-          top = extremeY - this.offset.y - brick.geometry._aabb._hh + (this.dogman.state.pos.get(1) - this.initialYOffset);
+          top = extremeY - this.offset.y - brick.geometry._aabb._hh + this._getOffsetDueToDogman();
         else
-          top = extremeY + this.offset.y + brick.geometry._aabb._hh + (this.dogman.state.pos.get(1) - this.initialYOffset);
+          top = extremeY + this.offset.y + brick.geometry._aabb._hh + this._getOffsetDueToDogman();
       }
 
-	  console.log("adding", brick.geometry._aabb._hw * 2, "x", brick.geometry._aabb._hh * 2, "brick at (" + left + ", " + top + ")");
+	  // console.log("adding", brick.geometry._aabb._hw * 2, "x", brick.geometry._aabb._hh * 2, "brick at (" + left + ", " + top + ")");
 	  brick.state.pos.set(left, top);
 	  brick.state.pos.lock({
-		x: this.options.gutterWidth / 3  // maybe halving is fine, but let's play it safe
+		x: this.options.gutterWidth / 2
 	  });
 
 	  /*
@@ -323,8 +331,6 @@ define('masonry', ['physicsjs'], function( Physics ) {
 	  });
 	  */
 	  
-	  this.trainer.distanceConstraint(brick, this.dogman, 0.02, brick.state.pos.dist(this.dogman.state.pos));
-
       // apply setHeight to necessary columns
       for ( i=0; i < setSpan; i++ ) {
         colYs[ shortCol + i ] = setHeight;

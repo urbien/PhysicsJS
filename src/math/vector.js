@@ -554,6 +554,46 @@
         this.recalc = true;
         return this;
     };
+	
+    /**
+     * HACK - Locks the axes of this vector to ranges
+	 * @param {Object} Ex: { x: 10 } will lock the x axis of this vector to a range of size 10 around the current x value
+     */
+	var vFns = ['set', 'add', 'vadd', 'sub', 'vsub', 'mult', 'perp', 'clone', 'zero', 'negate', 'clamp'];
+	Vector.prototype.lock = function(lock) {
+		var self = this,
+			origX = this.get(0),
+			origY = this.get(1),
+			lockX = lock.hasOwnProperty('x'),
+			lockY = lock.hasOwnProperty('y'),
+			xMin = lockX ? origX - lock.x / 2 : -Infinity,
+			xMax = lockX ? origX + lock.x / 2 : Infinity,
+			yMin = lockY ? origY - lock.y / 2 : -Infinity,
+			yMax = lockY ? origY + lock.y / 2 : Infinity;			
+		
+		vFns.forEach(function(fn) {
+			var orig = self[fn];
+			self[fn] = function() {
+				try {
+					return orig.apply(this, arguments);
+				} finally {
+					this._[0] = max(min(this._[0], xMax), xMin);
+					this._[1] = max(min(this._[1], yMax), yMin);
+					this.recalc = true;
+				};
+			};
+		});
+	};
+	
+    /**
+     * HACK - Unlocks the axes of this vector
+     */
+	Vector.prototype.unlock = function() {
+		var self = this;
+		vFns.forEach(function(fn) {
+			self[fn] = Vector.prototype[fn];
+		});
+	};
 
     /**
      * Render string

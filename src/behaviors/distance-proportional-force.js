@@ -1,12 +1,13 @@
 /**
- * Newtonian attraction between bodies (inverse square law)
- * @module behaviors/newtonian
+ * Attraction between bodies inversely proportional to the nth power of the distance between them (defaults to n=2, which is newtonian attraction)
+ * @module behaviors/distance-proportional-force
  */
-Physics.behavior('newtonian', function( parent ){
+Physics.behavior('distance-proportional-force', function( parent ){
 
     var defaults = {
 
-        strength: 1
+        strength: 1,
+		n: 2, // the strength of the force is proportional to distance^n
     };
 
     return {
@@ -23,8 +24,9 @@ Physics.behavior('newtonian', function( parent ){
 
             options = Physics.util.extend({}, defaults, options);
 
+            this.n = options.n;
             this.strength = options.strength;
-            this.tolerance = Math.abs(options.tolerance || 100 * this.strength);
+            this.tolerance = options.tolerance || 100 * this.strength;
         },
         
         /**
@@ -37,11 +39,12 @@ Physics.behavior('newtonian', function( parent ){
             var bodies = data.bodies
                 ,body
                 ,other
+				,n = this.n
                 ,strength = this.strength
                 ,tolerance = this.tolerance
                 ,scratch = Physics.scratchpad()
                 ,pos = scratch.vector()
-                ,normsq
+                ,normPowN
                 ,g
                 ;
 
@@ -56,11 +59,11 @@ Physics.behavior('newtonian', function( parent ){
                     pos.clone( other.state.pos );
                     pos.vsub( body.state.pos );
                     // get the square distance
-                    normsq = pos.normSq();
+                    normPowN = Math.pow(pos.norm(), n);
 
-                    if (normsq > tolerance){
+                    if (normPowN > tolerance){
 
-                        g = strength / normsq;
+                        g = strength / normPowN;
 
                         body.accelerate( pos.normalize().mult( g * other.mass ) );
                         other.accelerate( pos.mult( body.mass/other.mass ).negate() );

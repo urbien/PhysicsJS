@@ -4,7 +4,6 @@ Physics.integrator('verlet', function( parent ){
     // so let's add a mixin to bodies
 
     Physics.body.mixin({
-
         started: function( val ){
             if ( val !== undefined ){
                 this._started = true;
