@@ -10,7 +10,7 @@
  * Copyright 2011 David DeSandro
  */
 
-define('masonry', ['physicsjs'], function(Physics) {
+(function(root, Physics) {
   // ========================= Masonry ===============================
 
   var ArrayProto = Array.prototype;
@@ -83,11 +83,11 @@ define('masonry', ['physicsjs'], function(Physics) {
       this.axis = this.options.horizontal ? 'x' : 'y';
 //      this.AXIS = this.axis.toUpperCase();
       this.originalFromBottom = this.options.fromBottom;
-	  this.bounds = options.bounds;
-	  this.offset = {
-		x: this.bounds._pos.get(0) - this.bounds._hw,
-		y: this.bounds._pos.get(1) - this.bounds._hh
-	  };
+			this.bounds = options.bounds;
+			this.offset = {
+				x: this.bounds._pos.get(0) - this.bounds._hw,
+				y: this.bounds._pos.get(1) - this.bounds._hh
+			};
   
       // get original styles in case we re-apply them in .destroy()
       // var elemStyle = this.element.style;
@@ -106,7 +106,7 @@ define('masonry', ['physicsjs'], function(Physics) {
     // after it has already been initialized.
     _init: function() {
       this.reLayout();
-	  this._initialized = true;
+			this._initialized = true;
     },
 
     getContentBounds: function() {
@@ -468,7 +468,7 @@ define('masonry', ['physicsjs'], function(Physics) {
           top,
           height,
           i = bricks.length,
-		  dogmanOffset = this.dogman.state.pos.get(1) - this.initialYOffset;
+		  dogmanOffset = this._getOffsetDueToDogman();
 
       while (i--) {
         brick = bricks[i];
@@ -493,6 +493,12 @@ define('masonry', ['physicsjs'], function(Physics) {
       this._recalcColYs();
     }
   };
-
-  return Mason;  
-});
+  
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define('masonry', function(){ return Mason });
+	} else {
+		// Browser globals (root is window)
+		root.Mason = Mason;
+	}
+})(this, this.Physics);

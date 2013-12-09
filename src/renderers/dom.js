@@ -66,7 +66,7 @@ Physics.renderer('dom', function( proto ){
 				|| pos.dist(rendered.pos) > this._world._opts.positionRenderResolution 
 				|| Math.abs(angle - rendered.angular.pos) > this._world._opts.angleRenderResolution) {
 				
-				body.rendered(pos);
+				body.rendered(true);
 				rendered.angular.pos = angle;
 				rendered.pos.clone(pos);
 				
@@ -77,8 +77,8 @@ Physics.renderer('dom', function( proto ){
 					sinNC = Math.sin(-angle),
 					transform = 'matrix3d(',
 					aabb = body.geometry._aabb,
-					x = pos.get(0) - aabb._hw,
-					y = pos.get(1) - aabb._hh;
+					x = pos.get(0) - (aabb._hw || 0),
+					y = pos.get(1) - (aabb._hh || 0);
 					
 				// 4 rows of the transform matrix
 				transform += cosC + ', ' + sinNC + ', 0, 0, ';

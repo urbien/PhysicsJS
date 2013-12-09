@@ -1,0 +1,398 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>PhysicsJS Masonry</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+
+  <!-- General styles -->
+  <!--link href="http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700|Alice" rel="stylesheet" type="text/css"-->
+  <link rel="stylesheet" href="fonts/Caviar-Dreams-fontfacekit/stylesheet.css">
+  <link rel="stylesheet" href="style.css">
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<!-- Setup -->
+    <header class="controls" style="right:0px;top:100px;">
+        <div class="inner">
+            <ul>
+                <li class="button"><a href="#" class="buttons append">append</a></li>
+                <li class="button"><a href="#" class="buttons prepend">prepend</a></li>
+                <li class="button"><a href="#" class="buttons trim-head">trim head</a></li>
+                <li class="button"><a href="#" class="buttons trim-tail">trim tail</a></li>
+                <li class="button"><a href="#" class="buttons start-stop">pause</a></li>
+            </ul>
+        </div>
+    </header>
+    <div id="display">
+        <div id="viewport" style="-webkit-transform-style:preserve-3d; width: 100%; height:100%;">
+			<div class="group"></div>
+		</div>
+    </div>
+
+<!-- Scripts -->
+<script src="../lib/require.js"></script>
+<script>
+var Physics = {
+	util: {}
+};
+
+require({
+    baseUrl: './',
+    paths: {
+		'ticker': '../src/util/ticker',
+        'physicsjs': './physicsjs',
+        'hammer': '../lib/hammer',
+        'masonry': './masonryLayout'
+    }
+}, ['physicsjs', 'hammer'], function(Physics, Hammer){
+
+	function $() {
+		return document.querySelector.apply(document, arguments);
+	};
+
+	var viewportEl,
+		groupEl,
+		paused = false,
+		DO_GROUP = false,
+		GROUP_ID = 'masonryGroup',
+		DOGMAN_ID = 'dogman',
+		worker = new Worker('sims/masonryWorker.js'),
+		hammer,
+		viewWidth = window.innerWidth,
+		viewHeight = window.innerHeight,
+		COL_WIDTH = 30,
+		BATCH_SIZE = 10,
+		bodyEls = {},
+		masonryEls = [],
+		draggables = [],
+		bounds = [],
+		unrendered;
+		
+    // resize events
+	window.addEventListener('resize', function(){
+		calcBounds();
+		worker.postMessage({
+			method: 'updateBounds',
+			args: bounds
+		});
+	});
+	
+	function calcBounds() {
+		bounds[0] = bounds[1] = 0;
+		bounds[2] = viewWidth = window.innerWidth / 2;
+		bounds[3] = viewHeight = window.innerHeight;
+		bounds[2] = viewWidth;
+		bounds[3] = viewHeight;
+	};
+
+	// initialize a world showing a demo
+	function init() {
+		calcBounds();
+		viewportEl = document.getElementById('viewport');
+		hammer = new Hammer(viewportEl, {});
+		
+		groupEl = viewportEl.querySelector('.group');
+		if (DO_GROUP) {
+			bodyEls[GROUP_ID] = groupEl;
+			draggables.push(GROUP_ID);
+		}
+		else
+			draggables.push(DOGMAN_ID);
+		
+		DragProxy.init();
+		DragProxy.connect(hammer);
+	
+		worker.onmessage = onWorkerMessage;
+		worker.postMessage({
+			bounds: bounds,
+			dogman: !DO_GROUP
+		});
+		
+		if (DO_GROUP) {
+			worker.postMessage({
+				method: 'addBody',
+				args: ['point', {
+					_id: GROUP_ID,
+					lock: {
+						x: 0
+					},
+					x: 0,
+					y: 0,
+					mass: 10
+				}]
+			});
+		}
+		else {
+			worker.postMessage({
+				method: 'addBody',
+				args: ['point', {
+					_id: DOGMAN_ID,
+					lock: {
+						x: 0
+					},
+					x: bounds[1] / 2,
+					y: bounds[3] * 10,
+					mass: 10
+				}]
+			});
+		}
+		
+		worker.postMessage({
+			method: 'masonry',
+			args: [{
+				dogman: DOGMAN_ID,
+				gutterWidth: 10
+			}]
+		});
+		
+		Physics.util.ticker.subscribe(function( time, dt ) {
+			if (unrendered) {
+				render(unrendered);
+				unrendered = null;
+			}
+			
+			DragProxy.behave();
+		});
+		
+		Physics.util.ticker.start();
+	};
+
+	var DragProxy = {
+		init: function( options ){
+			this.touchPos = Physics.vector();
+			this.touchPosOld = Physics.vector();
+			this.tmp = Physics.vector();
+			this.dragged = Physics.vector();
+			this.offset = Physics.vector();
+			
+			this.dragging = false;			
+			this._ondrag = this._ondrag.bind(this);
+			this._ondragend = this._ondragend.bind(this);
+		},
+
+		_ondrag: function(e) {
+			var gesture = e.gesture,
+				center = gesture.center,
+				touch = e.gesture.touches[0];
+				
+			if (this.dragging) {
+				this.touchPosOld.clone(this.touchPos);
+				this.touchPos.set(touch.pageX, touch.pageY);
+			}
+			else {
+				this.dragging = true;
+				this.touchPos.set(touch.pageX, touch.pageY);
+				this.tmp.clone(this.touchPos);
+				this.tmp.sub(gesture.deltaY / 2, gesture.deltaY / 2);
+				this.touchPosOld.clone(this.tmp);
+			}
+			
+			this.tmp.clone(this.touchPos);
+			this.tmp.vsub(this.touchPosOld);
+			this.dragged.vadd(this.tmp.mult( 1 / 2 ));
+		},
+
+		_ondragend: function(e) {
+			if (this.dragging) {
+				this.dragging = false;
+				worker.postMessage({
+					method: 'dragend',
+					args: [this.dragged._, draggables]
+				});
+			}
+		},
+
+		connect: function( hammer ){				
+			// subscribe the .behave() method to the position integration step
+			hammer.on('drag', this._ondrag);
+			hammer.on('dragend', this._ondragend);
+		},
+
+		disconnect: function( hammer ){
+			// unsubscribe when disconnected
+			hammer.off('drag', this._ondrag);
+			hammer.off('dragend', this._ondragend);
+		},
+		
+		behave: function( data ){
+			if (this.dragging && !this.dragged.equals(Physics.vector.zero)) {
+				worker.postMessage({
+					method: 'drag',
+					args: [this.dragged._, draggables]
+				});
+				
+				this.dragged.zero();
+			}
+		}
+	};
+	
+  // play/pause button
+	var playPause = $('.start-stop'),
+			appendBricks = $('.append'),
+			prependBricks = $('.prepend'),
+			trimHead = $('.trim-head'),
+			trimTail = $('.trim-tail');
+		
+	playPause.addEventListener('click', function(e){
+		e.preventDefault();
+        if (paused){
+            playPause.textContent = 'pause';
+        } else {
+            playPause.textContent = 'play';
+        }
+		
+		worker.postMessage({
+			object: 'world',
+			method: paused ? 'unpause' : 'pause'
+		});
+		
+		paused = !paused;
+	});
+	
+	appendBricks.addEventListener('click', addBricks.bind(null, false));
+	prependBricks.addEventListener('click', addBricks.bind(null, true));
+	
+	trimTail.addEventListener('click', removeBricks.bind(null, false));
+	trimHead.addEventListener('click', removeBricks.bind(null, true));
+
+	function newBrickEl(width, height) {
+		var el = document.createElement('div');
+		el.setAttribute('class', 'pjs-convex-polygon');
+		el.style.position = 'absolute';
+		el.style.width = width + 'px';
+		el.style.height = height + 'px';
+		return el;
+	};
+	
+	function randomWidth() {
+		return COL_WIDTH; //Math.ceil(Math.random() * NUM_COLS) * COL_WIDTH;
+	};
+		
+	function randomHeight() {
+		// return COL_WIDTH; 
+		return Math.ceil(Math.random() * 4) * COL_WIDTH | 0;
+	}		
+
+	function addBricks(prepend, e) {
+		e.preventDefault();
+		var n = BATCH_SIZE, //Math.ceil(Math.random() * BATCH_SIZE),
+				i = n,
+				toAdd = new Array(n),
+				info = new Array(n),
+				id,
+				width, 
+				height;
+				
+		while (i--) {
+			id = Physics.util.uniqueId('brick');
+			width = randomWidth();
+			height = randomHeight();
+			toAdd[i] = bodyEls[id] = newBrickEl(width, height);
+			info[i] = {
+				_id: id,
+				fixed: DO_GROUP,
+				mass: 0.1,
+				vertices: [
+					{x: 0, y: height},
+					{x: width, y: height},
+					{x: width, y: 0},
+					{x: 0, y: 0}
+				],
+				restitution: 0.9
+			};
+		}
+		
+		masonryEls[prepend ? 'unshift' : 'push'].apply(masonryEls, toAdd);
+		worker.postMessage({
+			method: 'addBricks',
+			args: [info, prepend]
+		});
+		
+		i = info.length;
+		while (i--) {
+			worker.postMessage({
+				method: 'distanceConstraint',
+				args: [info[i]._id, DOGMAN_ID, 0.5]
+			});		
+		}
+	};
+	
+	function render(transforms) {
+		var bodyEl;
+		for (var id in transforms) {
+			bodyEl = bodyEls[id];
+			if (bodyEl) {
+				bodyEl.style['WebkitTransform'] = transforms[id];
+			
+				if (!bodyEl.parentNode)
+					groupEl.appendChild(bodyEl);
+			}
+		}
+	};
+
+	function removeBricks(fromTheHead, e) {
+		e.preventDefault();
+		
+		var n = Math.ceil(Math.random() * BATCH_SIZE);
+		n = Math.min(n, masonryEls.length);
+		
+		var removeFrom = fromTheHead ? 0 : masonryEls.length - n,
+			removeTo = fromTheHead ? n : masonryEls.length;
+//			removed,
+//			id,
+//			ids = [];
+		
+		for (var i = removeFrom; i < removeTo; i++) {
+//			id = masonryEls[i]._id;
+//			ids.push(bodyEls[id]);
+			var el = masonryEls[i];
+			for (var id in bodyEls) {
+				if (bodyEls[id] == el) {
+					el.parentNode.removeChild(el);
+					delete bodyEls[id];
+				}
+			}
+		}
+		
+		if (fromTheHead) {
+//			removed = masonryEls.slice(0, n);
+			masonryEls = masonryEls.slice(n);
+		}
+		else {
+//			removed = masonryEls.slice(masonryEls.length - n);
+			masonryEls.length = masonryEls.length - n;
+		}
+					
+		worker.postMessage({
+			method: 'removeBricks',
+			args: [n, fromTheHead]
+		});		
+	};
+	
+	function onWorkerMessage(e) {
+		var topic = e.data.topic;
+		switch (topic) {
+			case 'render':
+				unrendered = e.data.bodies;
+				break;
+		}
+	};
+	
+	init();
+});
+</script>
+  
+</body>
+</html>

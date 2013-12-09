@@ -1,47 +1,27 @@
 /**
  * Follow touch
  * Allows bodies to follow the motions of the dragged mouse
+ *
+ * requires Hammer.js
  * @module behaviors/follow-touch
  */
 
 Physics.behavior('follow-touch', function(parent) {
+	var DRAG_TOPIC = 'drag';
 	return {
-		addTouchFollower: function(body) {
-			this._bodies.push(body);
-		},
-		
-		removeTouchFollower: function(body) {
-			this._bodies.splice(this._bodies.indexOf(body), 1);
-		},
-		
 		init: function( options ){
-			var self = this;
-			var constrainer;
-
+            // call parent init method
+            parent.init.call(this, options); // do we need options at all here?
+			
 			this.touchPos = Physics.vector();
 			this.touchPosOld = Physics.vector();
 			this.tmp = Physics.vector();
 			this.dragged = Physics.vector();
 			this.offset = Physics.vector();
 			
-			this.dragging = false;
-			this._bodies = [];
-			if (options.bodies)
-				this._bodies.push.apply(this._bodies(options.bodies));
-				
-			if (options.body)
-				this._bodies.push(options.body);
-			
+			this.dragging = false;			
 			this._ondrag = this._ondrag.bind(this);
 			this._ondragend = this._ondragend.bind(this);
-			this._onswipe = this._onswipe.bind(this);
-			this._onremoveBody = this._onremoveBody.bind(this);
-		},
-		
-		_onremoveBody: function(data) {
-			if (~this._bodies.indexOf(data.body)) {
-				this.removeTouchFollower(data.body);
-			}
 		},
 
 		_ondrag: function(e) {
@@ -67,60 +47,38 @@ Physics.behavior('follow-touch', function(parent) {
 		},
 
 		_ondragend: function(e) {
-			this.dragging = false;
+			if (this.dragging) {
+				this.dragging = false;
+				this._world.publish({
+					topic: 'dragend',
+					vector: this.dragged
+				});
+			}
 		},
 
-		_onswipe: function(e) {
-			this.dragging = false;
-		},
-		
 		connect: function( world ){				
 			// subscribe the .behave() method to the position integration step
 			world._hammer.on('drag', this._ondrag);
 			world._hammer.on('dragend', this._ondragend);
-			world._hammer.on('swipe', this._onswipe);
 			world.subscribe('integrate:positions', this.behave, this);
-			world.subscribe('remove:body', this._onremoveBody);
 		},
 
 		disconnect: function( world ){
 			// unsubscribe when disconnected
 			world._hammer.off('drag', this._ondrag);
 			world._hammer.off('dragend', this._ondragend);
-			world._hammer.off('swipe', this._onswipe);
 			world.unsubscribe('integrate:positions', this.behave);
-			world.unsubscribe('remove:body', this._onremoveBody);
 		},
 
 		behave: function( data ){
-			if (!this.dragging || !this._bodies.length || this.dragged.equals(Physics.vector.zero))
-				return;
+			if (this.dragging && !this.dragged.equals(Physics.vector.zero)) {
+				this._world.publish({
+					topic: DRAG_TOPIC,
+					vector: this.dragged
+				});
 				
-			var i = this._bodies.length,
-				body,
-				pos,
-				lock,
-				dragged = this.dragged,
-				draggedX = dragged.get(0),
-				draggedY = dragged.get(1);
-				
-			while (i--) {
-				body = this._bodies[i];
-				if (body.options.fixed)
-					continue;
-					
-				pos = body.state.pos;
-				lock = body.options.lock;
-				if (lock)
-					pos.add(lock.x ? 0 : draggedX, lock.y ? 0 : draggedY);
-				else
-					pos.vadd(dragged);
-				
-				body.state.vel.clone( dragged.mult( 1 / 10 ) );
-				body.state.vel.clamp( { x: -1, y: -1 }, { x: 1, y: 1 } );
+				this.dragged.zero();
 			}
-			
-			this.dragged.zero();
 		}
 	};
 });

@@ -9,42 +9,44 @@ define([
 ) {
     var sim = function( world, Physics ){
 
-        var containerEl = document.getElementById('viewport'),
-			groupEl = containerEl.querySelector('.group'),
-			groupPt = Physics.body('point', { view: groupEl, mass: 10 }),
-            viewWidth = window.innerWidth,
-            viewHeight = window.innerWidth,
-			BATCH_SIZE = 10,
-			COL_WIDTH = 30,
-			INTER_BRICK_MARGIN = 10,
-			NUM_COLS = 5,
-			MASONRY_WIDTH = COL_WIDTH * NUM_COLS + INTER_BRICK_MARGIN * (NUM_COLS - 1),
-			//LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
-            bounds,
+			var containerEl = document.getElementById('viewport'),
+					groupEl = containerEl.querySelector('.group'),
+					groupPt = Physics.body('point', { view: groupEl, mass: 10 }),
+					viewWidth = window.innerWidth,
+					viewHeight = window.innerWidth,
+					BATCH_SIZE = 10,
+					COL_WIDTH = 30,
+					INTER_BRICK_MARGIN = 10,
+					NUM_COLS = 5,
+					MASONRY_WIDTH = COL_WIDTH * NUM_COLS + INTER_BRICK_MARGIN * (NUM_COLS - 1),
+					//LEFT_WALL_OFFSET_FROM_CENTER = MASONRY_WIDTH / 2 | 0,
+					bounds,
 
-			// CONFIG
-			// anti-gravity and brick->brick close quarters repulsion (HINT: don't use these ever)
-			ADD_FORCES = false,
-			// move all bricks as a group - easy on the CPU as the world only tracks one body
-			DO_GROUP = true,
-			// END CONFIG
-			
-			dogman = Physics.body('point', {
-				mass: 1,
-				hidden: true
-			}),
-			hammerOptions = {},
-			hammer = new Hammer(containerEl, hammerOptions),
-			touchFollower,
-			/*
-            edgeBounce = Physics.behavior('edge-collision-detection', {
-                aabb: bounds,
-                restitution: 0.3,
-                cof: 0.5
-            }),*/
-			constrainer = Physics.behavior('verlet-constraints', { iterations: 1 }), // same as default iterations value, but it's good to remember what we can change
-			bodyCount = 0,
-			mason;
+					// CONFIG
+					// anti-gravity and brick->brick close quarters repulsion (HINT: don't use these ever)
+					ADD_FORCES = false,
+					// move all bricks as a group - easy on the CPU as the world only tracks one body
+					DO_GROUP = false,
+					// END CONFIG
+					
+					dogman = Physics.body('point', {
+						mass: 1,
+						hidden: true
+					}),
+					hammerOptions = {},
+					hammer = new Hammer(containerEl, hammerOptions),
+					followTouch,
+					touchFollowers = [],
+						/*
+									edgeBounce = Physics.behavior('edge-collision-detection', {
+											aabb: bounds,
+											restitution: 0.3,
+											cof: 0.5
+									}),*/
+					constrainer = Physics.behavior('verlet-constraints', { iterations: 1 }), // same as default iterations value, but it's good to remember what we can change
+					bodyCount = 0,
+					// worker = new Worker('sims/masonryWorker.js'),
+					mason;
 			
 		function calcBounds() {
 			//return Physics.aabb(viewWidth / 2 - LEFT_WALL_OFFSET_FROM_CENTER | 0, 0, viewWidth / 2 + LEFT_WALL_OFFSET_FROM_CENTER | 0, viewHeight);
@@ -227,17 +229,42 @@ define([
 		});
 		
 		world._hammer = hammer;
-		touchFollower = Physics.behavior('follow-touch');
+		followTouch = Physics.behavior('follow-touch');
+		world.add(followTouch);
+		world.subscribe('drag', function(data) {
+			var i = touchFollowers.length,
+				follower;
+				
+			while (i--) {
+				follower = touchFollowers[i];
+				follower.state.pos.vadd(data.vector);
+				follower.state.vel.zero();
+				// follower.state.vel.clone( data.vector.mult( 1 / 10 ) )
+								  // .clamp( { x: -1, y: -1 }, { x: 1, y: 1 } );
+			}
+		});
+
+		world.subscribe('dragend', function(data) {
+			var i = touchFollowers.length,
+				follower;
+				
+			while (i--) {
+				follower = touchFollowers[i];
+				follower.state.vel.clone( data.vector.mult( 1 / 10 ) );
+			}
+		});
+		
 		if (DO_GROUP) {
-			touchFollower.addTouchFollower(groupPt);
+			//touchFollower.addTouchFollower(groupPt);
+			touchFollowers.push(groupPt);
 			world.add(groupPt);
 		}
 		else {
-			touchFollower.addTouchFollower(dogman);
+			//touchFollower.addTouchFollower(dogman);
+			touchFollowers.push(dogman);
 			world.add(dogman);
 		}
 		
-		world.add(touchFollower);
 		
 		if (ADD_FORCES) {
 			// add close-distance repulsion
